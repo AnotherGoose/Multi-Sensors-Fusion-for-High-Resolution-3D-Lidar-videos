@@ -3,14 +3,17 @@ import os
 import sys
 import random
 import math
+import csv
 import numpy as np
 import skimage.io
 import matplotlib
 import matplotlib.pyplot as plt
+from imutils.video import FPS
 from mrcnn import utils
 import mrcnn.model as modellib
 from mrcnn import visualize_cv
 from coco import coco
+
 
 class InferenceConfig(coco.CocoConfig):
     # Set batch size to 1 since we'll be running inference on
@@ -33,32 +36,27 @@ def getMRCNNPredsImg(img):
 
     config = InferenceConfig()
 
+
+    fps = FPS().start()
+
     # Create model object in inference mode.
     model = modellib.MaskRCNN(mode="inference", model_dir=modelDir, config=config)
     # Load weights trained on MS-COCO
     model.load_weights(cocoDir, by_name=True)
 
     # Read off text file
-    classNames = ["Dumb", "Bitch"]
+    with open('Model_Data/classNames.txt', newline='') as csvfile:
+        fileData = list(csv.reader(csvfile, delimiter=','))
 
-    class_names = ['BG', 'person', 'bicycle', 'car', 'motorcycle', 'airplane',
-                   'bus', 'train', 'truck', 'boat', 'traffic light',
-                   'fire hydrant', 'stop sign', 'parking meter', 'bench', 'bird',
-                   'cat', 'dog', 'horse', 'sheep', 'cow', 'elephant', 'bear',
-                   'zebra', 'giraffe', 'backpack', 'umbrella', 'handbag', 'tie',
-                   'suitcase', 'frisbee', 'skis', 'snowboard', 'sports ball',
-                   'kite', 'baseball bat', 'baseball glove', 'skateboard',
-                   'surfboard', 'tennis racket', 'bottle', 'wine glass', 'cup',
-                   'fork', 'knife', 'spoon', 'bowl', 'banana', 'apple',
-                   'sandwich', 'orange', 'broccoli', 'carrot', 'hot dog', 'pizza',
-                   'donut', 'cake', 'chair', 'couch', 'potted plant', 'bed',
-                   'dining table', 'toilet', 'tv', 'laptop', 'mouse', 'remote',
-                   'keyboard', 'cell phone', 'microwave', 'oven', 'toaster',
-                   'sink', 'refrigerator', 'book', 'clock', 'vase', 'scissors',
-                   'teddy bear', 'hair drier', 'toothbrush']
+    #Flatten File Data
+    classNames = []
+    for lists in fileData:
+        for val in lists:
+            classNames.append(val)
 
     # Run detection
     results = model.detect([img], verbose=1)
+    fps.stop()
 
     # Visualize results
     r = results[0]
@@ -67,7 +65,9 @@ def getMRCNNPredsImg(img):
 
     if display == True:
         InstSeg = visualize_cv.displayInstances(img, r['rois'], r['masks'], r['class_ids'],
-                                                class_names, r['scores'])
+                                                classNames, r['scores'])
+
+
 
     cv2.imshow('Instance Segmentation', InstSeg)
 
@@ -92,6 +92,8 @@ def getMRCNNPredsImg(img):
         w = x2 - x1
         h = y2 - y1
         ROI[i] = [x1, y1, w, h]
+
+    print("Elasped time: {:.2f}".format(fps.elapsed()))
 
     os.chdir("../")
     return ROI, masks
