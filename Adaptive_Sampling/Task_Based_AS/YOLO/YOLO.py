@@ -78,6 +78,9 @@ def getYOLOPredsImg(img, conThresh = 0.5, overThresh = 0.3, cuda = False):
 
     # Remove overlapping bounding boxes and bounding boxes
     bboxes = cv2.dnn.NMSBoxes(boxes, confidences, conThresh, overThresh)
+
+    ROI = 0
+
     if len(bboxes) > 0:
         #Make a clean 2D array depending on ROI's provided
         ROI = np.empty(((len(bboxes.flatten())), 4), int)
@@ -90,20 +93,27 @@ def getYOLOPredsImg(img, conThresh = 0.5, overThresh = 0.3, cuda = False):
 
     display = True
 
+    preds = 0
     if display == True:
+        preds = img
         if len(bboxes) > 0:
             for i in bboxes.flatten():
                 (x, y) = (boxes[i][0], boxes[i][1])
                 (w, h) = (boxes[i][2], boxes[i][3])
                 color = [int(c) for c in colors[classIDs[i]]]
-                cv2.rectangle(img, (x, y), (x + w, y + h), color, 1)
+                cv2.rectangle(preds, (x, y), (x + w, y + h), color, 1)
                 text = "{}: {:.4f}".format(labels[classIDs[i]], confidences[i])
-                cv2.putText(img, text, (x, y - 5),
+                cv2.putText(preds, text, (x, y - 5),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
 
-        cv2.imshow("Predictions", img)
 
     print("Elasped time: {:.2f}".format(fps.elapsed()))
 
+    #Check if anything was detected
+    try:
+        x, y, w, h = ROI[0]
+        detected = True
+    except:
+        detected = False
 
-    return ROI
+    return detected, ROI, preds
