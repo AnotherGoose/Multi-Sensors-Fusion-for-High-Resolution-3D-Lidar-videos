@@ -63,13 +63,10 @@ def getMRCNNPredsImg(img):
 
     display = True
 
+    preds = 0
     if display == True:
-        InstSeg = visualize_cv.displayInstances(img, r['rois'], r['masks'], r['class_ids'],
+        preds = visualize_cv.displayInstances(img, r['rois'], r['masks'], r['class_ids'],
                                                 classNames, r['scores'])
-
-
-
-    cv2.imshow('Instance Segmentation', InstSeg)
 
     # rois are y1, x1 and y2, x2
     masks = r['masks'][:, :, :]
@@ -96,4 +93,12 @@ def getMRCNNPredsImg(img):
     print("Elasped time: {:.2f}".format(fps.elapsed()))
 
     os.chdir("../")
-    return ROI, masks
+
+    #Check if anything was detected
+    try:
+        x, y, w, h = ROI[0]
+        detected = True
+    except:
+        detected = False
+
+    return detected, ROI, masks, preds
