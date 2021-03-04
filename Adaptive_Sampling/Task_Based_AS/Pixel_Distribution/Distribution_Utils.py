@@ -49,7 +49,8 @@ def rmse(predictions, targets):
     RMSE = mean_squared_error(targets, predictions, squared=False)
     return RMSE
 
-def seperateArray(array, pixels):
+def seperateArrayInt(array, pixels):
+    #Seperate the array for interpolation
     h, w = array.shape
 
     # Values for non NaN points in the array
@@ -66,6 +67,28 @@ def seperateArray(array, pixels):
                 c += 1
     return values, points
 
+def seperateArrayPC(array, pixels):
+    #Seperate the array for Point Cloud
+    h, w = array.shape
+
+    # Values for non NaN points in the array
+    x = np.empty(pixels)
+    y = np.empty(pixels)
+    z = np.empty(pixels)
+
+    c = 0
+    for i in range(h):
+        for j in range(w):
+            if not math.isnan(array[i][j]):
+                x[c] = j
+                y[c] = i
+                z[c] = array[i][j]
+                c += 1
+    x = x.astype(np.uint8)
+    y = y.astype(np.uint8)
+    z = z.astype(np.uint8)
+    return x, y, z
+
 def nInterp2D(pixels, array):
     # Given a specific number of non-NaN pixels
     # interpolate to the grid of the 2D array
@@ -75,7 +98,7 @@ def nInterp2D(pixels, array):
     # Grid to interpolate over
     grid_y, grid_x = np.mgrid[0:h, 0:w]
 
-    values, points = seperateArray(array, pixels)
+    values, points = seperateArrayInt(array, pixels)
 
     Nearest = griddata(points, values, (grid_y, grid_x), method='nearest')
     Nearest = Nearest.astype(np.uint8)
