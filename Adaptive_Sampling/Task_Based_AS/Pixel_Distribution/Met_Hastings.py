@@ -97,7 +97,7 @@ def RandomWalkMetHastings(img, AS, fMap, sigma, N):
 
     #Split array to quickly go through pixels
     pUsed = utils.nonNan(AS)
-    values, points = utils.seperateArray(AS, pUsed)
+    values, points = utils.seperateArrayInt(AS, pUsed)
 
     for i in range(values.size):
         y, x = points[i]
@@ -120,8 +120,7 @@ def RandomWalkMetHastings(img, AS, fMap, sigma, N):
                     xPrev = xProp
         AS[y][x] = np.nan
         AS[yPrev][xPrev] = img[yPrev][xPrev]
-    nearestAS = utils.nInterp2D(pUsed, AS)
-    #nearestAS = AS
+    nearestAS = AS
     return nearestAS
 
 '''
