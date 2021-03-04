@@ -8,7 +8,7 @@ os.chdir('../../')
 projectDir = os.path.abspath(os.getcwd())
 
 #Import Images
-imgName = "Dad.png"
+imgName = "Mannequin.png"
 
 os.chdir("Input_RGB")
 img = cv2.imread(imgName)
@@ -40,20 +40,26 @@ oThresh = 0.3
 
 cuda = False
 
-boundingROI = getYOLOPredsImg(img, cThresh, oThresh, cuda)
-instanceROI, instanceMasks = getMRCNNPredsImg(img)
+detectedBB, boundingROI, outputRecog = getYOLOPredsImg(img, cThresh, oThresh, cuda)
+detectedI, instanceROI, instanceMasks, outputRecog = getMRCNNPredsImg(img)
 
 # Compress Masks
 instanceMask = combineMasks(instanceMasks)
 
 # Make this a user input
 pixels = 10000
+if detectedBB:
+    RWMHBB = M_H.RandomWalkMetHastingsBBox(depth, boundingROI, pixels, 1, 10, 100, 25)
+    cv2.imshow('RWMH-BB', RWMHBB)
+else:
+    print("YOLO did not detect an object")
 
-RWMHBB = M_H.RandomWalkMetHastingsBBox(depth, boundingROI, pixels, 1, 10, 100, 25)
-RWMHI = M_H.RandomWalkMetHastingsInstance(depth, instanceMask, pixels, 1, 10, 1000, 25)
+if detectedI:
+    RWMHI = M_H.RandomWalkMetHastingsInstance(depth, instanceMask, pixels, 1, 10, 1000, 25)
+    cv2.imshow('RWMH-Instance', RWMHI)
+else:
+    print("Mask-RCNN did not detect an object")
 
-cv2.imshow('RWMH-Instance', RWMHI)
-cv2.imshow('RWMH-BB', RWMHBB)
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
