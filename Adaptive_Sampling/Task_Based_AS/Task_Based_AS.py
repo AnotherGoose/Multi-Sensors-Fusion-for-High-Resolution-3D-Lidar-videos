@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import os
 import sys
+import pandas as pd
 
 initialDir = os.path.abspath(os.getcwd())
 os.chdir('../../')
@@ -27,7 +28,9 @@ from YOLO import getYOLOPredsImg
 sys.path.append(os.path.join(initialDir, "Mask_RCNN"))
 from Mask_RCNN import getMRCNNPredsImg
 sys.path.append(os.path.join(initialDir, "Pixel_Distribution"))
-from Distribution_Utils import combineMasks
+
+#Import point distribution libraries
+import Distribution_Utils as utils
 import Met_Hastings as M_H
 #import Random_Sampling
 #import Unifrom_Sampling
@@ -44,22 +47,43 @@ detectedBB, boundingROI, outputRecog = getYOLOPredsImg(img, cThresh, oThresh, cu
 detectedI, instanceROI, instanceMasks, outputRecog = getMRCNNPredsImg(img)
 
 # Compress Masks
-instanceMask = combineMasks(instanceMasks)
+instanceMask = utils.combineMasks(instanceMasks)
 
 # Make this a user input
 pixels = 10000
+pointCloud = True
+sheetName = "frame_0001"
+
+def savePoints(x, y, z, fileName, sheetName):
+    dx = pd.DataFrame([x, y, z], index= ['x', 'y', 'z'])
+    dx.to_excel(fileName, sheet_name= sheetName)
+    return 0
+
 if detectedBB:
     RWMHBB = M_H.RandomWalkMetHastingsBBox(depth, boundingROI, pixels, 1, 10, 100, 25)
     cv2.imshow('RWMH-BB', RWMHBB)
+    pUsed = utils.nonNan(RWMHBB)
+    interpolatedRWMHBB = utils.nInterp2D(pUsed, RWMHBB)
+    cv2.imshow('Interpolated', interpolatedRWMHBB)
+    if pointCloud:
+        x, y, z = utils.seperateArrayPC(RWMHBB, pixels)
+        fileName = 'outputBB.xlsx'
+        savePoints(x, y, z, fileName, sheetName)
 else:
     print("YOLO did not detect an object")
 
 if detectedI:
     RWMHI = M_H.RandomWalkMetHastingsInstance(depth, instanceMask, pixels, 1, 10, 1000, 25)
     cv2.imshow('RWMH-Instance', RWMHI)
+    pUsed = utils.nonNan(RWMHI)
+    interpolatedRWMHI = utils.nInterp2D(pUsed, RWMHI)
+    cv2.imshow('Interpolated', interpolatedRWMHI)
+    if pointCloud:
+        x, y, z = utils.seperateArrayPC(RWMHI, pixels)
+        fileName = 'outputInst.xlsx'
+        savePoints(x, y, z, fileName, sheetName)
 else:
     print("Mask-RCNN did not detect an object")
-
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
