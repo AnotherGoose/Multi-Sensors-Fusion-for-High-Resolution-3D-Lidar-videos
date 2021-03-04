@@ -3,13 +3,15 @@ import numpy as np
 import os
 import sys
 import pandas as pd
+import scipy.io
 
 initialDir = os.path.abspath(os.getcwd())
 os.chdir('../../')
 projectDir = os.path.abspath(os.getcwd())
 
 #Import Images
-imgName = "Mannequin.png"
+#imgName = "Mannequin.png"
+imgName = "frame_0003.png"
 
 os.chdir("Input_RGB")
 img = cv2.imread(imgName)
@@ -50,13 +52,12 @@ detectedI, instanceROI, instanceMasks, outputRecog = getMRCNNPredsImg(img)
 instanceMask = utils.combineMasks(instanceMasks)
 
 # Make this a user input
-pixels = 10000
+pixels = 100000
 pointCloud = True
-sheetName = "frame_0001"
+sheetName = "frame_0003"
 
 def savePoints(x, y, z, fileName, sheetName):
-    dx = pd.DataFrame([x, y, z], index= ['x', 'y', 'z'])
-    dx.to_excel(fileName, sheet_name= sheetName)
+    scipy.io.savemat(fileName, dict(x=x, y=y, z=z))
     return 0
 
 if detectedBB:
@@ -64,10 +65,10 @@ if detectedBB:
     cv2.imshow('RWMH-BB', RWMHBB)
     pUsed = utils.nonNan(RWMHBB)
     interpolatedRWMHBB = utils.nInterp2D(pUsed, RWMHBB)
-    cv2.imshow('Interpolated', interpolatedRWMHBB)
+    cv2.imshow('InterpolatedBB', interpolatedRWMHBB)
     if pointCloud:
         x, y, z = utils.seperateArrayPC(RWMHBB, pixels)
-        fileName = 'outputBB.xlsx'
+        fileName = 'outputBB.mat'
         savePoints(x, y, z, fileName, sheetName)
 else:
     print("YOLO did not detect an object")
@@ -77,10 +78,10 @@ if detectedI:
     cv2.imshow('RWMH-Instance', RWMHI)
     pUsed = utils.nonNan(RWMHI)
     interpolatedRWMHI = utils.nInterp2D(pUsed, RWMHI)
-    cv2.imshow('Interpolated', interpolatedRWMHI)
+    cv2.imshow('InterpolatedInst', interpolatedRWMHI)
     if pointCloud:
         x, y, z = utils.seperateArrayPC(RWMHI, pixels)
-        fileName = 'outputInst.xlsx'
+        fileName = 'outputInst.mat'
         savePoints(x, y, z, fileName, sheetName)
 else:
     print("Mask-RCNN did not detect an object")
