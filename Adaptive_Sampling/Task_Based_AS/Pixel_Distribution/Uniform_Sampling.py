@@ -13,6 +13,7 @@ def uniformS(img, nPixels):
     US = utils.uniformSpread(img, nPixels, US)
 
     uniformNearest = utils.nInterp2D(nPixels, US)
+    uniformNearest = US
     return uniformNearest
 
 
@@ -54,9 +55,8 @@ def uniformAS(img, ROI, nPixels, rPort):
 
     bPixels += pRem
     AS = utils.uniformSpread(img, bPixels, AS)
-    pUsed = utils.nonNan(AS)
-    uniformNearest = utils.nInterp2D(pUsed, AS)
-    #uniformNearest = AS
+
+    uniformNearest = AS
     return uniformNearest
 
 '''

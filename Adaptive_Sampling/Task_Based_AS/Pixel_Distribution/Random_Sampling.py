@@ -70,5 +70,5 @@ def randomS(img, pixels):
             RS[rY][rX] = img[rY][rX]
             pCount += 1
 
-    nearestRS = utils.nInterp2D(pixels, RS)
+    nearestRS = RS
     return nearestRS
