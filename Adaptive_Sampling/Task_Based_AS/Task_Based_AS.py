@@ -52,12 +52,22 @@ detectedI, instanceROI, instanceMasks, outputRecog = getMRCNNPredsImg(img)
 instanceMask = utils.combineMasks(instanceMasks)
 
 # Make this a user input
-pixels = 100000
+pixels = 5000
 pointCloud = True
-sheetName = "frame_0003"
+sheetName = "frame1"
+initial = True
 
-def savePoints(x, y, z, fileName, sheetName):
-    scipy.io.savemat(fileName, dict(x=x, y=y, z=z))
+
+def savePoints(fileName, array):
+    frames, dim, length = array.shape
+
+    with open(fileName, 'wb') as f:  # need 'wb' in Python3
+        for i in range(frames):
+            name = 'frame' + str(i)
+            x = array[i][0]
+            y = array[i][1]
+            z = array[i][2]
+            scipy.io.savemat(f, {name: (x, y, z)})
     return 0
 
 if detectedBB:
@@ -66,10 +76,20 @@ if detectedBB:
     pUsed = utils.nonNan(RWMHBB)
     interpolatedRWMHBB = utils.nInterp2D(pUsed, RWMHBB)
     cv2.imshow('InterpolatedBB', interpolatedRWMHBB)
+
     if pointCloud:
-        x, y, z = utils.seperateArrayPC(RWMHBB, pixels)
+        frames = 0
+        x, y, z = utils.seperateArrayPC(RWMHBB, pUsed)
         fileName = 'outputBB.mat'
-        savePoints(x, y, z, fileName, sheetName)
+        if initial:
+            frames = np.zeros((1, 3, pUsed))
+            frames[0] = x, y, z
+            initial = False
+        else:
+            newDim = np.vstack([x, y, z])
+            newDim = newDim[np.newaxis, :, :]
+            frames = np.append(frames, newDim, axis=0)
+        savePoints(fileName, frames)
 else:
     print("YOLO did not detect an object")
 
@@ -79,12 +99,31 @@ if detectedI:
     pUsed = utils.nonNan(RWMHI)
     interpolatedRWMHI = utils.nInterp2D(pUsed, RWMHI)
     cv2.imshow('InterpolatedInst', interpolatedRWMHI)
+
     if pointCloud:
-        x, y, z = utils.seperateArrayPC(RWMHI, pixels)
+        frames = 0
+        x, y, z = utils.seperateArrayPC(RWMHI, pUsed)
         fileName = 'outputInst.mat'
-        savePoints(x, y, z, fileName, sheetName)
+        if initial:
+            frames = np.zeros((1, 3, pUsed))
+            frames[0] = x, y, z
+            initial = False
+        else:
+            newDim = np.vstack([x, y, z])
+            newDim = newDim[np.newaxis, :, :]
+            frames = np.append(frames, newDim, axis=0)
+        savePoints(fileName, frames)
 else:
     print("Mask-RCNN did not detect an object")
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
+
+
+#if initial:
+#    frames = np.zeros((1, 3, pUsed))
+#    frames[i] = (x, y, z)
+#else:
+#    frames[i] = (x, y, z)
+
+#Once loop is finished
