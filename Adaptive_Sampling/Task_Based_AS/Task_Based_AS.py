@@ -70,60 +70,42 @@ def savePoints(fileName, array):
             scipy.io.savemat(f, {name: (x, y, z)})
     return 0
 
-if detectedBB:
-    RWMHBB = M_H.RandomWalkMetHastingsBBox(depth, boundingROI, pixels, 1, 10, 100, 25)
-    cv2.imshow('RWMH-BB', RWMHBB)
-    pUsed = utils.nonNan(RWMHBB)
-    interpolatedRWMHBB = utils.nInterp2D(pUsed, RWMHBB)
-    cv2.imshow('InterpolatedBB', interpolatedRWMHBB)
+if __name__ == "__main__":
+    if detectedBB:
+        RWMHBB = M_H.RandomWalkMetHastingsBBox(depth, boundingROI, pixels, 1, 10, 100, 25)
+        cv2.imshow('RWMH-BB', RWMHBB)
+        pUsed = utils.nonNan(RWMHBB)
+        interpolatedRWMHBB = utils.nInterp2D(pUsed, RWMHBB)
+        cv2.imshow('InterpolatedBB', interpolatedRWMHBB)
 
-    if pointCloud:
-        frames = 0
-        x, y, z = utils.seperateArrayPC(RWMHBB, pUsed)
-        fileName = 'outputBB.mat'
-        if initial:
+        if pointCloud:
+            frames = 0
+            x, y, z = utils.seperateArrayPC(RWMHBB, pUsed)
+            fileName = 'outputBB.mat'
             frames = np.zeros((1, 3, pUsed))
             frames[0] = x, y, z
             initial = False
-        else:
-            newDim = np.vstack([x, y, z])
-            newDim = newDim[np.newaxis, :, :]
-            frames = np.append(frames, newDim, axis=0)
-        savePoints(fileName, frames)
-else:
-    print("YOLO did not detect an object")
+            savePoints(fileName, frames)
+    else:
+        print("YOLO did not detect an object")
 
-if detectedI:
-    RWMHI = M_H.RandomWalkMetHastingsInstance(depth, instanceMask, pixels, 1, 10, 1000, 25)
-    cv2.imshow('RWMH-Instance', RWMHI)
-    pUsed = utils.nonNan(RWMHI)
-    interpolatedRWMHI = utils.nInterp2D(pUsed, RWMHI)
-    cv2.imshow('InterpolatedInst', interpolatedRWMHI)
+    if detectedI:
+        RWMHI = M_H.RandomWalkMetHastingsInstance(depth, instanceMask, pixels, 1, 10, 1000, 25)
+        cv2.imshow('RWMH-Instance', RWMHI)
+        pUsed = utils.nonNan(RWMHI)
+        interpolatedRWMHI = utils.nInterp2D(pUsed, RWMHI)
+        cv2.imshow('InterpolatedInst', interpolatedRWMHI)
 
-    if pointCloud:
-        frames = 0
-        x, y, z = utils.seperateArrayPC(RWMHI, pUsed)
-        fileName = 'outputInst.mat'
-        if initial:
+        if pointCloud:
+            frames = 0
+            x, y, z = utils.seperateArrayPC(RWMHI, pUsed)
+            fileName = 'outputInst.mat'
             frames = np.zeros((1, 3, pUsed))
             frames[0] = x, y, z
             initial = False
-        else:
-            newDim = np.vstack([x, y, z])
-            newDim = newDim[np.newaxis, :, :]
-            frames = np.append(frames, newDim, axis=0)
-        savePoints(fileName, frames)
-else:
-    print("Mask-RCNN did not detect an object")
+            savePoints(fileName, frames)
+    else:
+        print("Mask-RCNN did not detect an object")
 
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-
-
-#if initial:
-#    frames = np.zeros((1, 3, pUsed))
-#    frames[i] = (x, y, z)
-#else:
-#    frames[i] = (x, y, z)
-
-#Once loop is finished
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
