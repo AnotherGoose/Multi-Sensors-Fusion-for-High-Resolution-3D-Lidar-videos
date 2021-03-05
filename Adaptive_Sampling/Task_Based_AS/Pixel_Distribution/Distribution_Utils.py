@@ -84,9 +84,9 @@ def seperateArrayPC(array, pixels):
                 y[c] = i
                 z[c] = array[i][j]
                 c += 1
-    x = x.astype(np.uint8)
-    y = y.astype(np.uint8)
-    z = z.astype(np.uint8)
+    #x = x.astype(np.uint8)
+    #y = y.astype(np.uint8)
+    #z = z.astype(np.uint8)
     return x, y, z
 
 def nInterp2D(pixels, array):
