@@ -12,10 +12,8 @@ dir = dir[:-(len(baseName))]
 
 os.chdir(dir)
 initialDir = os.path.abspath(os.getcwd())
-print(initialDir)
 os.chdir('../../')
 projectDir = os.path.abspath(os.getcwd())
-print(projectDir)
 
 #Import Libraries
 sys.path.append(os.path.join(initialDir, "YOLO"))
@@ -70,11 +68,11 @@ def videoDetection(inputRGBVideoPath, inputDepthVideoPath, outputDepthPath, outp
 
     depth = cv2.cvtColor(depth, cv2.COLOR_RGB2GRAY)
 
-    vidDepth = cv2.VideoWriter(outputDepthPath, cv2.VideoWriter_fourcc(
-        *"MJPG"), capDepth.get(cv2.CAP_PROP_FPS), (depth.shape[1], depth.shape[0]), 0)
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 
-    vidRecog = cv2.VideoWriter(outputRecogPath, cv2.VideoWriter_fourcc(
-        *"MJPG"), capDepth.get(cv2.CAP_PROP_FPS), (img.shape[1], img.shape[0]), True)
+    vidDepth = cv2.VideoWriter(outputDepthPath, fourcc, capDepth.get(cv2.CAP_PROP_FPS), (depth.shape[1], depth.shape[0]), 0)
+
+    vidRecog = cv2.VideoWriter(outputRecogPath, fourcc, capDepth.get(cv2.CAP_PROP_FPS), (img.shape[1], img.shape[0]), True)
 
     depth = cv2.cvtColor(depth, cv2.COLOR_GRAY2RGB)
 
@@ -135,6 +133,8 @@ def videoDetection(inputRGBVideoPath, inputDepthVideoPath, outputDepthPath, outp
 
         h, w = outputDepth.shape
 
+        #Remove this for display
+        '''
         if pointCloud:
             for i in range(h):
                 for j in range(w):
@@ -142,7 +142,8 @@ def videoDetection(inputRGBVideoPath, inputDepthVideoPath, outputDepthPath, outp
                         outputDepth[i][j] = 0
             outputDepth = outputDepth.astype(np.uint8)
         else:
-            outputDepth = utils.nInterp2D(pUsed, outputDepth)
+        '''
+        outputDepth = utils.nInterp2D(pUsed, outputDepth)
 
         if displayOutput:
             cv2.imshow("ModelOutput", outputDepth)
@@ -171,10 +172,10 @@ def videoDetection(inputRGBVideoPath, inputDepthVideoPath, outputDepthPath, outp
 
 
 if __name__ == "__main__":
-    inputDepth = 'Input_Depth/Frames_15fps.mp4'
+    inputDepth = 'Input_Depth/NoisyFramesLN_15fps.mp4'
     inputRGB = 'Input_RGB/Frames_15fps.mp4'
-    outputDepthPath = 'Output/depthOutput.avi'
-    outputRecogPath = 'Output/recogOutput.avi'
+    outputDepthPath = 'Output/depthOutputLN.mp4'
+    outputRecogPath = 'Output/recogOutput.mp4'
     detectionMethod = boundingBox
     pCloud = True
     pixels = 5000
