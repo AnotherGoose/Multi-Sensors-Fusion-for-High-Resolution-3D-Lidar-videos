@@ -89,7 +89,7 @@ def videoDetection(inputRGBVideoPath, inputDepthVideoPath, outputDepthPath, outp
         if detectionType == boundingBox:
             # Bounding Box
             detected, boundingROI, outputRecog = getYOLOPredsImg(img, cThresh, oThresh, cuda)
-
+            fName = 'outputBB.mat'
             if detected:
                 #outputDepth = M_H.RandomWalkMetHastingsBBox(depth, boundingROI, pixels, 1, 10, 100, 25)
                 outputDepth = M_H.RandomWalkMetHastingsBBox(depth, boundingROI, pixels, 1, 10, 1000, 25)
@@ -100,6 +100,7 @@ def videoDetection(inputRGBVideoPath, inputDepthVideoPath, outputDepthPath, outp
         elif detectionType == instanceSegmentation:
             # Instance
             detected, instanceROI, instanceMasks, outputRecog = getMRCNNPredsImg(img)
+            fName = 'outputInst.mat'
             if detected:
                 # Compress Masks
                 instanceMask = utils.combineMasks(instanceMasks)
@@ -121,7 +122,7 @@ def videoDetection(inputRGBVideoPath, inputDepthVideoPath, outputDepthPath, outp
 
         if pointCloud:
             x, y, z = utils.seperateArrayPC(outputDepth, pUsed)
-            fileName = 'outputBB.mat'
+            fileName = projectDir + '/Sampling_Output/' + fName
             if initial:
                 frames = np.zeros((1, 3, pUsed))
                 frames[0] = x, y, z
@@ -172,11 +173,16 @@ def videoDetection(inputRGBVideoPath, inputDepthVideoPath, outputDepthPath, outp
 
 
 if __name__ == "__main__":
-    inputDepth = 'Input_Depth/NoisyFramesLN_15fps.mp4'
-    inputRGB = 'Input_RGB/Frames_15fps.mp4'
-    outputDepthPath = 'Output/depthOutputLN.mp4'
-    outputRecogPath = 'Output/recogOutput.mp4'
+
+    inputDepth = projectDir + '/Input_Depth/NoisyFramesLN_15fps.mp4'
+    inputRGB = projectDir + '/Input_RGB/Frames_15fps.mp4'
+    outputDepthPath = projectDir + '/Sampling_Output/depthOutputLN.mp4'
+    outputRecogPath = projectDir + '/Sampling_Output/recogOutput.mp4'
     detectionMethod = boundingBox
+    print(inputDepth)
+    print(inputRGB)
+    print(outputDepthPath)
+    print(outputRecogPath)
     pCloud = True
     pixels = 5000
     displayOutput = True
