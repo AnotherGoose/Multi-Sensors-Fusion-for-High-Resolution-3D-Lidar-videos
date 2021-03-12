@@ -3,10 +3,17 @@ import os
 from imutils.video import FPS
 import numpy as np
 
+baseName = os.path.basename(__file__)
+dir = __file__
+dir = dir[:-(len(baseName))]
+
+os.chdir(dir)
+cDir = os.path.abspath(os.getcwd())
+
 def getYOLOPredsImg(img, conThresh = 0.5, overThresh = 0.3, cuda = False):
 
-    yoloConfigPath = 'YOLO/Model_Data/yolov4.cfg'
-    yoloWeightsPath = 'YOLO/Model_Data/yolov4.weights'
+    yoloConfigPath = cDir + '/Model_Data/yolov4.cfg'
+    yoloWeightsPath = cDir + '/Model_Data/yolov4.weights'
 
     net = cv2.dnn.readNetFromDarknet(yoloConfigPath, yoloWeightsPath)
 
@@ -14,9 +21,10 @@ def getYOLOPredsImg(img, conThresh = 0.5, overThresh = 0.3, cuda = False):
         net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
         net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
 
+    cocoLabelsPath = cDir + '/coco/coco.names'
 
     #Read Labels
-    with open('YOLO/coco/coco.names', 'r', encoding='utf-8') as f:
+    with open(cocoLabelsPath, 'r', encoding='utf-8') as f:
         labels = f.read().strip().split('\n')
 
     # Get layer names that output predictions from YOLO
