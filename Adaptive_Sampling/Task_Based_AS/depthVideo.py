@@ -44,7 +44,7 @@ def savePoints(fileName, array):
             scipy.io.savemat(f, {name: (x, y, z)})
     return 0
 
-def videoDetection(inputRGBVideoPath, inputDepthVideoPath, outputDepthPath, outputRecogPath, pixels, detectionType, pointCloud, displayOutput):
+def videoDetection(inputRGBVideoPath, inputDepthVideoPath, outputDepthPath, outputRecogPath, precentage, detectionType, pointCloud, displayOutput):
     # detectionType   0 - Bounding box
     #                 1 - Instance segmentation
 
@@ -76,11 +76,17 @@ def videoDetection(inputRGBVideoPath, inputDepthVideoPath, outputDepthPath, outp
 
     depth = cv2.cvtColor(depth, cv2.COLOR_GRAY2RGB)
 
+    #Calculated Desired Pixels
+    h, w, c = img.shape
+    pTot = h * w
+    pixels = int(pTot * (precentage/100))
+
     initial = True
     frames = 0
 
     while successRGB and successDepth:
         depth = cv2.cvtColor(depth, cv2.COLOR_RGB2GRAY)
+
 
         # Fix for when pixels and pUsed don't match up for saving pClouds
         pUsed = utils.nonNan(U_S.uniformS(depth, pixels))
@@ -174,9 +180,9 @@ def videoDetection(inputRGBVideoPath, inputDepthVideoPath, outputDepthPath, outp
 
 if __name__ == "__main__":
 
-    inputDepth = projectDir + '/Input_Depth/NoisyFramesLN_15fps.mp4'
+    inputDepth = projectDir + '/Input_Depth/NoisyFramesHN_15fps.mp4'
     inputRGB = projectDir + '/Input_RGB/Frames_15fps.mp4'
-    outputDepthPath = projectDir + '/Sampling_Output/depthOutputLN.mp4'
+    outputDepthPath = projectDir + '/Sampling_Output/depthOutputHN.mp4'
     outputRecogPath = projectDir + '/Sampling_Output/recogOutput.mp4'
     detectionMethod = boundingBox
     print(inputDepth)
@@ -184,8 +190,8 @@ if __name__ == "__main__":
     print(outputDepthPath)
     print(outputRecogPath)
     pCloud = True
-    pixels = 5000
+    prec = 3
     displayOutput = True
 
     os.chdir(initialDir)
-    videoDetection(inputRGB, inputDepth, outputDepthPath, outputRecogPath, pixels, detectionMethod, pCloud, displayOutput)
+    videoDetection(inputRGB, inputDepth, outputDepthPath, outputRecogPath, prec, detectionMethod, pCloud, displayOutput)

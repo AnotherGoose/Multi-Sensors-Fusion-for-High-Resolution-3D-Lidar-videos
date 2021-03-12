@@ -42,7 +42,15 @@ while recognition != "0" or recognition != "1":
 recognition = int(recognition)
 
 #Collect pixel input
-pixels = 5000
+uInput = "Placeholder"
+valid = False
+while valid != True:
+    uInput = int(input("What precentage of the video would you like to sample (1% - 100%):"))
+    if uInput < 1 or uInput > 100:
+        print("Please input a value between 1 - 100")
+    else:
+        valid = True
+prec = uInput
 
 #Display Input
 uInput = "Placeholder"
@@ -60,4 +68,4 @@ while uInput != "0" or uInput != "1":
         print("Please input a valid number")
 
 
-videoDetection(inputRGB, inputDepth, outputDepthPath, outputRecogPath, pixels, recognition, pCloud, displayOutput)
+videoDetection(inputRGB, inputDepth, outputDepthPath, outputRecogPath, prec, recognition, pCloud, displayOutput)
