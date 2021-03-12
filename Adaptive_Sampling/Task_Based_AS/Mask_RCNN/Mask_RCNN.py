@@ -1,13 +1,6 @@
-import cv2
+
 import os
-import sys
-import random
-import math
 import csv
-import numpy as np
-import skimage.io
-import matplotlib
-import matplotlib.pyplot as plt
 from imutils.video import FPS
 from mrcnn import utils
 import mrcnn.model as modellib
