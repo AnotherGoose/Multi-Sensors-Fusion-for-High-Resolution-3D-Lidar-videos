@@ -765,13 +765,13 @@ def compute_ap_range(gt_box, gt_class_id, gt_mask,
             compute_ap(gt_box, gt_class_id, gt_mask,
                         pred_box, pred_class_id, pred_score, pred_mask,
                         iou_threshold=iou_threshold)
-        if verbose:
-            print("AP @{:.2f}:\t {:.3f}".format(iou_threshold, ap))
+        #if verbose:
+            # print("AP @{:.2f}:\t {:.3f}".format(iou_threshold, ap))
         AP.append(ap)
     AP = np.array(AP).mean()
-    if verbose:
-        print("AP @{:.2f}-{:.2f}:\t {:.3f}".format(
-            iou_thresholds[0], iou_thresholds[-1], AP))
+    # if verbose:
+        # print("AP @{:.2f}-{:.2f}:\t {:.3f}".format(
+        #    iou_thresholds[0], iou_thresholds[-1], AP))
     return AP
 
 
