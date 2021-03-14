@@ -8,6 +8,13 @@ from mrcnn import visualize_cv
 from coco import coco
 
 
+baseName = os.path.basename(__file__)
+dir = __file__
+dir = dir[:-(len(baseName))]
+
+os.chdir(dir)
+cDir = os.path.abspath(os.getcwd())
+
 class InferenceConfig(coco.CocoConfig):
     # Set batch size to 1 since we'll be running inference on
     # one image at a time. Batch size = GPU_COUNT * IMAGES_PER_GPU
@@ -17,12 +24,10 @@ class InferenceConfig(coco.CocoConfig):
 
 def getMRCNNPredsImg(img):
 
-    os.chdir("Mask_RCNN")
 
-
-    currDir = os.path.abspath(os.getcwd())
-    modelDir = os.path.join(currDir, "logs")
-    cocoDir = os.path.join(currDir, "Model_Data/mask_rcnn_coco.h5")
+    #currDir = os.path.abspath(os.getcwd())
+    modelDir = os.path.join(cDir, "logs")
+    cocoDir = os.path.join(cDir, "Model_Data/mask_rcnn_coco.h5")
 
     if not os.path.exists(cocoDir):
         utils.download_trained_weights(cocoDir)
@@ -37,8 +42,9 @@ def getMRCNNPredsImg(img):
     # Load weights trained on MS-COCO
     model.load_weights(cocoDir, by_name=True)
 
+    classesPath = cDir + "/Model_Data/classNames.txt"
     # Read off text file
-    with open('Model_Data/classNames.txt', newline='') as csvfile:
+    with open(classesPath, newline='') as csvfile:
         fileData = list(csv.reader(csvfile, delimiter=','))
 
     #Flatten File Data
