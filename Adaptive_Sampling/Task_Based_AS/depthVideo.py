@@ -2,7 +2,6 @@ import cv2
 import numpy as np
 import os
 import sys
-import math
 import scipy.io
 
 #Change directory for Matlab Script
