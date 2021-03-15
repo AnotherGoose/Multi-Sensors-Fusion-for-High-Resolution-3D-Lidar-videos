@@ -23,7 +23,7 @@ This repository is a collaboration of work between:
 
 ### Prerequisites
 
-To download this repo, you will need to install git LFS: 
+To download this repository, you will need to install git LFS: 
 <https://git-lfs.github.com/>
 
 ## Sample Data
