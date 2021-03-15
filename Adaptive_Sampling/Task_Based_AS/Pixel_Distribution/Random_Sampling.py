@@ -1,7 +1,6 @@
 import numpy as np
 import math
 import random
-import Distribution_Utils as utils
 
 def randomAS(img, ROI, pixels, roiPort):
     imH, imW = img.shape
@@ -47,9 +46,7 @@ def randomAS(img, ROI, pixels, roiPort):
         if math.isnan(AS[rY][rX]):
             AS[rY][rX] = img[rY][rX]
             pCount += 1
-
-    nearestAS = utils.nInterp2D(pixels, AS)
-    return nearestAS
+    return AS
 
 def randomS(img, pixels):
     imH, imW = img.shape
@@ -69,6 +66,27 @@ def randomS(img, pixels):
         if math.isnan(RS[rY][rX]):
             RS[rY][rX] = img[rY][rX]
             pCount += 1
+    return RS
 
-    nearestRS = RS
-    return nearestRS
+if __name__ == "__main__":
+    import cv2
+    import math
+    ROI = np.array([[27, 8, 95, 127]])
+    depth = cv2.imread("Mannequin.png")
+    depth = cv2.cvtColor(depth, cv2.COLOR_RGB2GRAY)
+    RAS = randomAS(depth, ROI, 10000, 0.6)
+    RS = randomS(depth, 10000)
+
+    row, col = depth.shape
+
+    for j in range(row):
+        for k in range(col):
+            if not math.isnan(RAS[j][k]):
+                RAS[j][k] = 1
+            if not math.isnan(RS[j][k]):
+                RS[j][k] = 1
+
+    cv2.imshow("RAS", RAS)
+    cv2.imshow("RS", RS)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()

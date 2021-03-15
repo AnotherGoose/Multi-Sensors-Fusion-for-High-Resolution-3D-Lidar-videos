@@ -12,9 +12,7 @@ def uniformS(img, nPixels):
 
     US = utils.uniformSpread(img, nPixels, US)
 
-    uniformNearest = utils.nInterp2D(nPixels, US)
-    uniformNearest = US
-    return uniformNearest
+    return US
 
 
 
@@ -56,16 +54,26 @@ def uniformAS(img, ROI, nPixels, rPort):
     bPixels += pRem
     AS = utils.uniformSpread(img, bPixels, AS)
 
-    uniformNearest = AS
-    return uniformNearest
+    return AS
 
-'''
-import cv2
-ROI = np.array([[0, 0, 142, 142]])
-depth = cv2.imread("Mannequin.png")
-depth = cv2.cvtColor(depth, cv2.COLOR_RGB2GRAY)
-AS = uniformAS(depth, ROI, 10000, 0.6)
-cv2.imshow("UAS", AS)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-'''
+if __name__ == "__main__":
+    import cv2
+    import math
+    ROI = np.array([[27, 8, 95, 127]])
+    depth = cv2.imread("Mannequin.png")
+    depth = cv2.cvtColor(depth, cv2.COLOR_RGB2GRAY)
+    AS = uniformAS(depth, ROI, 10000, 0.6)
+    US = uniformS(depth, 10000)
+
+    row, col = depth.shape
+
+    for j in range(row):
+        for k in range(col):
+            if not math.isnan(AS[j][k]):
+                AS[j][k] = 1
+            if not math.isnan(US[j][k]):
+                US[j][k] = 1
+    cv2.imshow("UAS", AS)
+    cv2.imshow("US", US)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()

@@ -1,8 +1,7 @@
 import numpy as np
-import math
 import random
 import Distribution_Utils as utils
-
+import math
 
 def MetHastingsBBox(img, ROI, pixels, bConst, roiConst, N):
     fMap = utils.createFeatureMapBBox(img, ROI, bConst, roiConst)
@@ -63,10 +62,7 @@ def MetHastings(img, pixels, fMap, N):
             if math.isnan(AS[nY][nX]):
                 AS[nY][nX] = n
                 pCount += 1
-
-    nearestAS = utils.nInterp2D(pixels, AS)
-    #nearestAS = AS
-    return nearestAS
+    return AS
 
 def RandomWalkMetHastingsBBox(img, ROI, pixels, bConst, roiConst, sigma, N):
     imH, imW = img.shape
@@ -123,24 +119,31 @@ def RandomWalkMetHastings(img, AS, fMap, sigma, N):
     nearestAS = AS
     return nearestAS
 
-'''
-import cv2
-import os
-import sys
-ROI = np.array([[0, 0, 142, 142]])
-x,y,w,h = ROI[0]
-depth = cv2.imread("Mannequin.png")
-depth = cv2.cvtColor(depth, cv2.COLOR_BGR2GRAY)
-pixels = 10000
-RWMH = RandomWalkMetHastingsBBox(depth, ROI, pixels, 1, 10, 100, 25)
-MH = MetHastingsBBox(depth, ROI, pixels, 1, 10, 5)
-#print(utils.rmse(AS, depth))
-#print(utils.rmse(AS[y:y + h, x:x + w], depth[y:y + h, x:x + w]))
-cv2.imshow("RWMH", RWMH)
-cv2.imshow("MH", MH)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
-'''
+
+if __name__ == "__main__":
+    import cv2
+    ROI = np.array([[27, 8, 95, 127]])
+    depth = cv2.imread("Mannequin.png")
+    depth = cv2.cvtColor(depth, cv2.COLOR_RGB2GRAY)
+
+    pixels = 10000
+
+    RMWH = RandomWalkMetHastingsBBox(depth, ROI, pixels, 1, 10, 100, 25)
+    MH = MetHastingsBBox(depth, ROI, pixels, 1, 10, 5)
+
+    row, col = depth.shape
+
+    for j in range(row):
+        for k in range(col):
+            if not math.isnan(RMWH[j][k]):
+                RMWH[j][k] = 1
+            if not math.isnan(MH[j][k]):
+                MH[j][k] = 1
+
+    cv2.imshow("RMWH", RMWH)
+    cv2.imshow("MH", MH)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
 
 
