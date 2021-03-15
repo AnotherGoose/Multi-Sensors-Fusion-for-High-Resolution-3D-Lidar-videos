@@ -26,28 +26,32 @@ What things you need to install the software and how to install them
 - pycocotools
 
 ### Installing
-
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
-
+(INSTALLATION GUIDE)
 ```
 Give the example
 ```
+
 ### Execution
+(IN COMMAND LINE)
+```
+Give the example
+```
 
+## Pixel Distribution Folder
+The pixel distribution folder has all the various point distribution methods, developed over the course of this project.
 
-## Pixel Distribution
+## Mask-RCNN & YOLO Folder
+Both of these folders hold the implementation of image recognition used within Task-Based Adaptive Sampling.
 
 ## Acknowledgements
 ### YOLO
-This implementation for YOLO was 
+The following youtube videos were extremely helpful in the building and installing for YOLO
 
-<Mhttps://www.youtube.com/watch?v=FE2GBeKuqpc&t=296s&ab_channel=TheCodingBug>
+* <https://www.youtube.com/watch?v=FE2GBeKuqpc&t=296s&ab_channel=TheCodingBug>
 
 ### Mask - RCNN
-The following youtube videos were extremly helpful in the building and installing for Mask-RCNN
+The following youtube videos were extremely helpful in the building and installing for Mask-RCNN
 
-<https://www.youtube.com/watch?v=2TikTv6PWDw&ab_channel=MarkJay>
-<https://www.youtube.com/watch?v=epTfYW6oDqA&ab_channel=MachineLearningHub>
+* <https://www.youtube.com/watch?v=2TikTv6PWDw&ab_channel=MarkJay>
+* <https://www.youtube.com/watch?v=epTfYW6oDqA&ab_channel=MachineLearningHub>
 

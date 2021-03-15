@@ -4,7 +4,7 @@ This repository is the demonstration of various improvements to a base implement
 
 This demonstration employs various techniques, such as:
 
-* **Adaptive sampling**
+* **Adaptive Sampling**
     * Task-Based Adaptive Sampling
     * Feature Extraction
 * **Denoising**
@@ -21,6 +21,10 @@ This repository is a collaboration of work between:
 * **Saif Saleem** - Inverse Problems
 * **Fezan Tabassum** - Guided Filtering
 
+### Prerequisites
+
+To download this repo, you will need to install git LFS: 
+<https://git-lfs.github.com/>
 
 ## Sample Data
 The input data for this demonstration is the dataset from the MPI Sintel Flow.
