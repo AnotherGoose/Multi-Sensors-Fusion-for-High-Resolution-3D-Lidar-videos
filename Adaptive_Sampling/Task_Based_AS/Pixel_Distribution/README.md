@@ -37,7 +37,7 @@ Bounding Box            |
 #### Example
 Bounding Box            | Instance Segmentation
 :-------------------------:|:-------------------------:
-![](https://i.imgur.com/ixdFQMe.png)  | There is no instance segmentation for uniform adaptive sampling because, <br> in a real-life scenario, sampling uniformly can miss periodicity in shapes. <br>Due to this issue, I ignored implementation for Instance Segmentation
+![](https://i.imgur.com/ixdFQMe.png)  | There is no instance segmentation for uniform adaptive sampling because, in a real-life scenario, sampling uniformly can miss periodicity in shapes. Due to this issue, I ignored implementation for Instance Segmentation
 
 
 ## Random Sampling
@@ -65,7 +65,7 @@ Bounding Box            |
 #### Example
 Bounding Box            | Instance Segmentation
 :-------------------------:|:-------------------------:
-![](https://i.imgur.com/Nh0Bk3Y.png)  | As the preformance of all random adative sample algorithms proposed <br> preform similarly only Metropolis Hastings proposals were adapted for <br>instance segmentation 
+![](https://i.imgur.com/Nh0Bk3Y.png)  | As the preformance of all random adative sample algorithms proposed preform similarly only Metropolis Hastings proposals were adapted for instance segmentation 
 
 ## Metropolis Hastings
 Below are the functions found within **Met_Hastings.py**
@@ -135,8 +135,8 @@ Bounding Box            |  Instance Segmentation
 * **RWMH** - The new sub-sampled output (not-interpolated)
 
 ### RandomWalkMetHastings(img, AS, fMap, sigma, N)
-**RandomWalkMetHastings**  implements the adaptation of the statistical distribution Metropolis Hastings dubbed Random Walk Metropolis Hastings.<br>
-This process is where the scene is uniformly sampled, and proposal points are compared against the previous point proposal on the feature map, which <br>is weighted appropriately and either accepted or rejected, depending on a random variable.<br>
+**RandomWalkMetHastings**  implements the adaptation of the statistical distribution Metropolis Hastings dubbed Random Walk Metropolis Hastings.
+This process is where the scene is uniformly sampled, and proposal points are compared against the previous point proposal on the feature map, which is weighted appropriately and either accepted or rejected, depending on a random variable.
 This results in the uniformly sampled points being 'drifted' towards regions of interest. The 'drifting' of these points are dependant on a variance provided.
 
 The following psuedo code outlines the execution of this method:
