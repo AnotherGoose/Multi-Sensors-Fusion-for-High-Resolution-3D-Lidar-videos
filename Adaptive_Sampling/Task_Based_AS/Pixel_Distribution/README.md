@@ -10,7 +10,7 @@ Below are the functions found within the **Uniform_Sampling.py**
 The distribution of pixels is based upon the aspect ratio of the original image. 
 The function **uniformSpread** within **Distribution_Utils.py** handles this process.
 #### Inputs
-* **img** - openCV input image (depth map)
+* **img** - OpenCV input image (depth map)
 * **nPixels** - New amount of pixels to uniformly sub-sample the input image 
 #### Outputs
 * **US** - The new uniformly sub-sampled output (not-interpolated)
@@ -27,7 +27,7 @@ Bounding Box            |
 (ROI) and the portion for the ROI's. This function uniformly samples both the ROI and background. The difference between this function and uniformS is that the variable rPort determines how much of the pixels are uniformly allocated towards the ROI and the remainder to the background
 
 #### Inputs
-* **img** - openCV input image (depth map)
+* **img** - OpenCV input image (depth map)
 * **ROI** - 2D numpy array with the x, y, width and height of the ROI stored respectively
 * **nPixels** - New amount of pixels to uniformly sub-sample the input image 
 * **rPort** - The portion of the total sub-sample pixels to allocate to the ROI's (0 > n < 1)
@@ -48,7 +48,7 @@ Below are the functions found within the **Random_Sampling.py**
 The indexes for the new points are randomly chosen. Further points are allocated until all pixels are used up. There is a check to determine if the point has been used before or not, checking if the pixel is a NaN. 
 
 #### Inputs
-* **img** - openCV input image (depth map)
+* **img** - OpenCV input image (depth map)
 * **pixels** - New amount of pixels to randomly sub-sample the input image 
 #### Outputs
 * **RS** - The new randomly sub-sampled output (not-interpolated)
@@ -71,9 +71,10 @@ Bounding Box            | Instance Segmentation
 Below are the functions found within **Met_Hastings.py**
 
 ### MetHastingsBBox(img, ROI, pixels, bConst, roiConst, N)
-**MetHastingsBBox** is the setup function to generate a feature map for the Metropolis-Hastings algorithm for a **Bounding Box** adaptation. The feature map function is found within distribution utils.
+**MetHastingsBBox** is the setup function to generate a feature map for the Metropolis-Hastings algorithm for a **Bounding 
+Box** adaptation. The feature map function is found within distribution utils.
 #### Inputs
-* **img** - openCV input image (depth map)
+* **img** - OpenCV input image (depth map)
 * **ROI** - 2D numpy array with the x, y, width and height of the ROI stored respectively
 * **pixels** - New amount of pixels to sub-sample the input image by
 * **bConst** - background constant weight for feature map 
@@ -83,9 +84,10 @@ Below are the functions found within **Met_Hastings.py**
 * **MH** - The new sub-sampled output (not-interpolated)
 
 ### MetHastingsInstance(img, mask, pixels, bConst, roiConst, N)
-**MetHastingsBBox** is the setup function to generate a feature map for the Metropolis-Hastings algorithm for an **Instance Segmentation** adaptation. The feature map function is found within distribution utils.
+**MetHastingsBBox** is the setup function to generate a feature map for the Metropolis-Hastings algorithm for an **Instance 
+Segmentation** adaptation. The feature map function is found within distribution utils.
 #### Inputs
-* **img** - openCV input image (depth map)
+* **img** - OpenCV input image (depth map)
 * **mask** - A mask defined by Mask-RCNN defining areas either true of false depending if an object is detected within that pixel or not
 * **pixels** - New amount of pixels to sub-sample the input image by
 * **bConst** - background constant weight for feature map 
@@ -97,7 +99,8 @@ Below are the functions found within **Met_Hastings.py**
 ### MetHastings(img, pixels, fMap, N)
 **MetHastings** is a function used to apply the Metropolis-Hastings Markov chain Monte Carlo method to obtain a guided sequence 
 of random samples. This process randomly samples a set of pixels within a scene and preforms an **N** 
-number of proposal areas to change the intial randomly chosen index to a more favourable placement, based upon a weighted feature map.
+number of proposal areas to change the initial randomly chosen index to a more favourable placement, based upon a weighted 
+feature map.
 
 The following psuedo code outlines the execution of this method:
 
@@ -123,7 +126,7 @@ Where: <br>
 
 
 #### Inputs
-* **img** - openCV input image (depth map)
+* **img** - OpenCV input image (depth map)
 * **pixels** - New amount of pixels to sub-sample the input image by
 * **fMap** - Feature map which has been pre-weighted
 * **N** - Iterations to provide to Metropolis-Hastings algorithm for number of proposal points for each individual index
@@ -136,9 +139,11 @@ Bounding Box            |  Instance Segmentation
 ![](https://i.imgur.com/XxyqYDi.png)  |  ![](https://i.imgur.com/RaARUA0.png)
 
 ### RandomWalkMetHastingsBBox(img, ROI, pixels, bConst, roiConst, sigma, N)
-**RandomWalkMetHastingsBBox** is the setup function to generate a feature map and a uniform spread of pixels for the Random Walk Metropolis-Hastings algorithm for an **Bounding Box** adaptation. The feature map and uniform spread function is found within distribution utils.
+**RandomWalkMetHastingsBBox** is the setup function to generate a feature map and a uniform spread of pixels for the 
+Random Walk Metropolis-Hastings algorithm for an **Bounding Box** adaptation. The feature map and uniform spread function 
+is found within distribution utils.
 #### Inputs
-* **img** - openCV input image (depth map)
+* **img** - OpenCV input image (depth map)
 * **ROI** - 2D numpy array with the x, y, width and height of the ROI stored respectively
 * **pixels** - New amount of pixels to sub-sample the input image by
 * **bConst** - background constant weight for feature map 
@@ -149,9 +154,11 @@ Bounding Box            |  Instance Segmentation
 * **RWMH** - The new sub-sampled output (not-interpolated)
 
 ### RandomWalkMetHastingsInstance(img, mask, pixels, bConst, roiConst, sigma, N)
-**RandomWalkMetHastingsInstance** is the setup function to generate a feature map and a uniform spread of pixels for the Random Walk Metropolis-Hastings algorithm for an **Instance segmentation** adaptation. The feature map and uniform spread function is found within distribution utils.
+**RandomWalkMetHastingsInstance** is the setup function to generate a feature map and a uniform spread of pixels for the 
+Random Walk Metropolis-Hastings algorithm for an **Instance segmentation** adaptation. The feature map and uniform spread 
+function is found within distribution utils.
 #### Inputs
-* **img** - openCV input image (depth map)
+* **img** - OpenCV input image (depth map)
 * **mask** - A mask defined by Mask-RCNN defining areas either true of false depending if an object is detected within that pixel or not
 * **pixels** - New amount of pixels to sub-sample the input image by
 * **bConst** - background constant weight for feature map 
@@ -162,9 +169,11 @@ Bounding Box            |  Instance Segmentation
 * **RWMH** - The new sub-sampled output (not-interpolated)
 
 ### RandomWalkMetHastings(img, AS, fMap, sigma, N)
-**RandomWalkMetHastings**  implements the adaptation of the statistical distribution Metropolis-Hastings dubbed, Random Walk Metropolis-Hastings.
-This process is where the scene is uniformly sampled, and proposal points are compared against the previous proposal points on the feature map, which is weighted appropriately and either accepted or rejected, depending on a random variable.
-This results in the uniformly sampled points being 'drifted' towards regions of interest. The 'drifting' of these points are dependant on a variance which is defined in the function inputs.
+**RandomWalkMetHastings**  implements the adaptation of the statistical distribution Metropolis-Hastings dubbed, Random 
+Walk Metropolis-Hastings. This process is where the scene is uniformly sampled, and proposal points are compared against 
+the previous proposal points on the feature map, which is weighted appropriately and either accepted or rejected, depending 
+on a random variable. This results in the uniformly sampled points being 'drifted' towards regions of interest. The 
+'drifting' of these points are dependant on a variance which is defined in the function inputs.
 
 The following psuedo code outlines the execution of this method:
 * Uniformly sample the scene
@@ -187,7 +196,7 @@ Where: <br>
 
 
 #### Inputs
-* **img** - openCV input image (depth map)
+* **img** - OpenCV input image (depth map)
 * **AS** - Uniformly sub-sampled scene
 * **fMap** - Feature map which has been pre-weighted
 * **sigma** - The variance of the new proposals from the original position (The amount of 'drift' points have)
@@ -203,3 +212,122 @@ Bounding Box            |  Instance Segmentation
 Below are the functions found within **Distribution_Utils.py**
 
 explain individual functions and theory behind
+### walkIndex(prevI, max, sigma)
+**walkIndex** generates an index proposal for the Random Walk Metropolis-Hastings algortihm, based upon the variance provided. 
+If the variance is such that it may take the propsal index outwith the area of the image then the area which the proposal can 
+be moved is adapted to ignore the points outwith the image.
+
+#### Inputs
+* **prevI** - The previous index to move from by the variance
+* **max** - The maximum index allowed to ensure the proposal index is not out of range
+* **sigma** - The varaince for the proposal from the original index point
+#### Outputs
+* **propI** - The new proposal index
+
+### createFeatureMapBBox(img, ROI, bConst, rConst)
+**createFeatureMapBBox** is the function to generate a feature map for a **Bounding Box** implementation of the model, The weights and locations of the ROI are provided in the inputs for the function.
+#### Inputs 
+* **img** - OpenCV input image (depth map)
+* **ROI** - 2D numpy array with the x, y, width and height of the ROI stored respectively
+* **bConst** - The weighting constant for the background
+* **rConst** - The weighting constant for ROI 
+#### Outputs
+* **fMap** - An appropriately weighted feature map to be used in Metropolis-Hastings algorithms.
+
+### createFeatureMapInstance(mask, bConst, iConst)
+**createFeatureMapBBox** is the function to generate a feature map for a **Instance Segmentation** implementation of the model, The weights and mask are provided in the inputs for the function.
+#### Inputs 
+* **mask** - A mask defined by Mask-RCNN defining areas either true of false depending if an object is detected within that pixel or not
+* **bConst** - The weighting constant for the background
+* **rConst** - The weighting constant for ROI 
+#### Outputs
+* **fMap** - An appropriately weighted feature map to be used in Metropolis-Hastings algorithms.
+
+### rmse(predictions, targets)
+**rmse** is used to calculate the rmse between to variables
+#### Inputs 
+* **predictions** - Predicitons to be compared
+* **targets** - Ground truth to compare predictions against
+#### Outputs
+* **RMSE** - The RMSE between the two variables
+
+### seperateArrayInt(array, pixels)
+**seperateArrayInt** function seperates a numpy array for nearest interpolation across the NaN points within the array.
+#### Inputs
+* **array** - The array to be interpolated
+* **pixels** - The number of non-NaN instances within the array
+#### Outputs
+* **values** - The z value corresponding to x and y values within the points array
+* **points** - The x and y values to the corresponding values within the values array
+
+### seperateArrayPC(array, pixels)
+**seperateArrayPC** function separates a numpy array for the x, y and z values to be saved into a .mat file for further processing.
+#### Inputs
+* **array** - The array to be interpolated
+* **pixels** - The number of non-NaN instances within the array
+#### Outputs
+* **x** - The x values corresponding with the same indexes in the other arrays
+* **y** - The arrays y values
+* **z** - The arrays z values
+
+### nInterp2D(pixels, array)
+**nInterp2D** preforms nearest interpolation on a 2D numpy array.
+#### Inputs
+* **pixels** - The number of non-NaN instances within the array
+* **array** - The array to be interpolated
+#### Outputs
+* **Nearest** - The newly interpolated array
+
+### getNewDimensions(nPixels, oWidth, oHeight)
+**getNewDimensions** gets calculates a new width and height, used to uniformly sub-sample the scene. Using the original 
+width and height of the image and from the new number of allocated pixels a new height and width can be 
+achieved. This approach was chosen as the aspect ratio for the area would stay the same regardless of the number of points 
+to sample. 
+#### Inputs
+* **nPixels** - Points to sub-sample the area of the image to
+* **oWidth** - Original width of the image
+* **oHeight** - Original height of the image
+#### Outputs
+* **nWidth** - New sub-sampled width
+* **nHeight** - New sub-sampled height
+
+###checkRounding(limit, w, h)
+**checkRounding** makes sure the rounding for an index does not excede the limit provided, used to prevent out of range 
+exceptions due to rounding errors. 
+#### Inputs
+* **limit** - The limit for the indexes
+* **w** - Width to be checked
+* **h** - Height to be checked
+#### Outputs
+* **w** - Checked width
+* **h** - Checked height
+
+### uniformSpread(oArray, nPoints, nArray)
+**uniformSpread** function uniformly sub-samples an array by a number of given points.
+#### Inputs
+* **oArray** - Original array to be sub-sampled
+* **nPoints** - Number of points to sub-sample the input array by
+* **nArray** - New array to be filled with sub-sampled points
+#### Outputs
+* **nArray** - Uniformly sub-sampled array
+
+### nonNan(array)
+**nonNan** checks an array and returns how many non-NaN values are within that array
+#### Inputs
+* **array** - Checks how many non-NaN values are within an array
+#### Outputs
+* **counter** - The number of non-Nan values in the array
+
+### invertGrayscale(img)
+**invertGrayscale** inverts a grayscale image
+#### Inputs
+* **img** - The grayscale image to be inverted
+#### Outputs
+* **img** - Grayscale converted image
+
+### combineMasks(masks)
+**combineMasks** flattens an array of masks into a single mask array.
+#### Inputs
+* **masks** - The mask array to be flattened
+#### Outputs
+* **mask** - Flattened mask array
