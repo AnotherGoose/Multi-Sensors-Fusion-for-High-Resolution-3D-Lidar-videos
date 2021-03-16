@@ -76,14 +76,14 @@ def RandomWalkMetHastingsBBox(img, ROI, pixels, bConst, roiConst, sigma, N):
     RWMH = RandomWalkMetHastings(img, AS, fMap, sigma, N)
     return RWMH
 
-def RandomWalkMetHastingsInstance(img, mask, pixels, bConst, iConst, sigma, N):
+def RandomWalkMetHastingsInstance(img, mask, pixels, bConst, roiConst, sigma, N):
     imH, imW = img.shape
 
     AS = np.empty((imH, imW))
     AS[:] = np.nan
 
     AS = utils.uniformSpread(img, pixels, AS)
-    fMap = utils.createFeatureMapInstance(mask, bConst, iConst)
+    fMap = utils.createFeatureMapInstance(mask, bConst, roiConst)
 
     RWMH = RandomWalkMetHastings(img, AS, fMap, sigma, N)
     return RWMH

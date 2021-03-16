@@ -63,21 +63,75 @@ Bounding Box            |
 
 
 #### Example
-Bounding Box            | 
-:-------------------------:|
-![](https://i.imgur.com/Nh0Bk3Y.png)  |
+Bounding Box            | Instance Segmentation
+:-------------------------:|:-------------------------:
+![](https://i.imgur.com/Nh0Bk3Y.png)  | As the preformance of all random adative sample algorithms proposed <br> preform similarly only Metropolis Hastings proposals were adapted for <br>instance segmentation 
 
 ## Metropolis Hastings
 Below are the functions found within **Met_Hastings.py**
-### MH(img, nPixels)
+
+### MetHastingsBBox(img, ROI, pixels, bConst, roiConst, N)
+**MetHastingsBBox** is the setup function to generate a feature map for the Metropolis Hastings algorithm for a **Bounding Box** adaptation. The feature map function is found within distribution utils.
+#### Inputs
+* **img** - openCV input image (depth map)
+* **ROI** - 2D numpy array with the x, y, width and height of the ROI stored respectively
+* **pixels** - New amount of pixels to sub-sample the input image by
+* **bConst** - background constant weight for feature map 
+* **roiConst** - ROI constant weight for feature map (detected objects) 
+* **N** - Iterations to provide to Met Hastings algorithm for number of proposal points for each new index found
+#### Outputs
+* **MH** - - The new sub-sampled output (not-interpolated)
+
+### MetHastingsInstance(img, mask, pixels, bConst, roiConst, N)
+**MetHastingsBBox** is the setup function to generate a feature map for the Metropolis Hastings algorithm for an **Instance Segmentation** adaptation. The feature map function is found within distribution utils.
+#### Inputs
+* **img** - openCV input image (depth map)
+* **mask** - A mask defined by Mask-RCNN defining areas either true of false depending if an object is detected within that pixel or not
+* **pixels** - New amount of pixels to sub-sample the input image by
+* **bConst** - background constant weight for feature map 
+* **roiConst** - ROI constant weight for feature map (detected objects) 
+* **N** - Iterations to provide to Met Hastings algorithm for number of proposal points for each new index found
+#### Outputs
+* **MH** - The new sub-sampled output (not-interpolated)
+
+### MetHastings(img, pixels, fMap, N)
+#### Inputs
+#### Outputs
 #### Example
 
 Bounding Box            |  Instance Segmentation
 :-------------------------:|:-------------------------:
 ![](https://i.imgur.com/XxyqYDi.png)  |  ![](https://i.imgur.com/RaARUA0.png)
 
+### RandomWalkMetHastingsBBox(img, ROI, pixels, bConst, roiConst, sigma, N)
+**RandomWalkMetHastingsBBox** is the setup function to generate a feature map and a uniform spread of pixels for the Random Walk Metropolis Hastings algorithm for an **Bounding Box** adaptation. The feature map and uniform spread function is found within distribution utils.
+#### Inputs
+* **img** - openCV input image (depth map)
+* **ROI** - 2D numpy array with the x, y, width and height of the ROI stored respectively
+* **pixels** - New amount of pixels to sub-sample the input image by
+* **bConst** - background constant weight for feature map 
+* **roiConst** - ROI constant weight for feature map (detected objects)
+* **sigma** - The variance of the new proposals from the orginal position (The amount of 'drift' points have)
+* **N** - Iterations to provide to Radnom Walk Met Hastings algorithm for number of proposal points for each individual index
+#### Outputs
+* **RWMH** - The new sub-sampled output (not-interpolated)
 
-### RWMH(img, nPixels)
+### RandomWalkMetHastingsInstance(img, mask, pixels, bConst, roiConst, sigma, N)
+**RandomWalkMetHastingsInstance** is the setup function to generate a feature map and a uniform spread of pixels for the Random Walk Metropolis Hastings algorithm for an **Instance segmentation** adaptation. The feature map and uniform spread function is found within distribution utils.
+#### Inputs
+* **img** - openCV input image (depth map)
+* **mask** - A mask defined by Mask-RCNN defining areas either true of false depending if an object is detected within that pixel or not
+* **pixels** - New amount of pixels to sub-sample the input image by
+* **bConst** - background constant weight for feature map 
+* **roiConst** - ROI constant weight for feature map (detected objects)
+* **sigma** - The variance of the new proposals from the orginal position (The amount of 'drift' points have)
+* **N** - Iterations to provide to Radnom Walk Met Hastings algorithm for number of proposal points for each individual index
+#### Outputs
+* **RWMH** - The new sub-sampled output (not-interpolated)
+
+### RandomWalkMetHastings(img, AS, fMap, sigma, N)
+#### Inputs
+#### Outputs
 #### Example
 Bounding Box            |  Instance Segmentation
 :-------------------------:|:-------------------------:
