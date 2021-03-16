@@ -116,8 +116,7 @@ def RandomWalkMetHastings(img, AS, fMap, sigma, N):
                     xPrev = xProp
         AS[y][x] = np.nan
         AS[yPrev][xPrev] = img[yPrev][xPrev]
-    nearestAS = AS
-    return nearestAS
+    return AS
 
 
 if __name__ == "__main__":

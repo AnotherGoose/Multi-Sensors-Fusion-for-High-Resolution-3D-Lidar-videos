@@ -96,7 +96,12 @@ Below are the functions found within **Met_Hastings.py**
 
 ### MetHastings(img, pixels, fMap, N)
 #### Inputs
+* **img**
+* **AS**
+* **fMap**
+* **N**
 #### Outputs
+* **AS**
 #### Example
 
 Bounding Box            |  Instance Segmentation
@@ -124,14 +129,44 @@ Bounding Box            |  Instance Segmentation
 * **pixels** - New amount of pixels to sub-sample the input image by
 * **bConst** - background constant weight for feature map 
 * **roiConst** - ROI constant weight for feature map (detected objects)
-* **sigma** - The variance of the new proposals from the orginal position (The amount of 'drift' points have)
-* **N** - Iterations to provide to Radnom Walk Met Hastings algorithm for number of proposal points for each individual index
+* **sigma** - The variance of the new proposals from the original position (The amount of 'drift' points have)
+* **N** - Iterations to provide to Random Walk Met Hastings algorithm for number of proposal points for each individual index
 #### Outputs
 * **RWMH** - The new sub-sampled output (not-interpolated)
 
 ### RandomWalkMetHastings(img, AS, fMap, sigma, N)
+**RandomWalkMetHastings**  implements the adaptation of the statistical distribution Metropolis Hastings dubbed Random Walk Metropolis Hastings.<br>
+This process is where the scene is uniformly sampled, and proposal points are compared against the previous point proposal on the feature map, which <br>is weighted appropriately and either accepted or rejected, depending on a random variable.<br>
+This results in the uniformly sampled points being 'drifted' towards regions of interest. The 'drifting' of these points are dependant on a variance provided.
+
+The following psuedo code outlines the execution of this method:
+* Uniformly sample the scene
+* Create a feature map of weighting ROI and background appropriately.
+* Start a loop through all uniformly sampled points.
+    * Loop N number of iterations
+        * New proposal for this uniformly sampled point is:<br>
+          n’ = n + round(σ*randn(1,1))
+        * α = featuremap(n’)/featuremap(n)
+	    * r is a uniform number between 0 and 1
+	    * If r < α accept this new proposal <br>
+        (n’ = n)<br>
+
+Where: <br>
+* **N** is the number of proposals to investigate for each uniformly sampled point<br>
+* **n** is the previous point<br>
+* **n’** is the new point proposal<br>
+* **α** is the ration between the new and old point within the feature map<br>
+* **σ** is the variance of the new proposals from the original position.
+
+
 #### Inputs
+* **img** - openCV input image (depth map)
+* **AS** - Uniformly sub-sampled scene
+* **fMap** - Feature map which has been pre-weighted
+* **sigma** - The variance of the new proposals from the original position (The amount of 'drift' points have)
+* **N** - Iterations to provide to Random Walk Met Hastings algorithm for number of proposal points for each individual index
 #### Outputs
+* **AS** - The new sub-sampled output (not-interpolated)
 #### Example
 Bounding Box            |  Instance Segmentation
 :-------------------------:|:-------------------------:
