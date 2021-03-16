@@ -37,7 +37,7 @@ Bounding Box            |
 #### Example
 Bounding Box            | Instance Segmentation
 :-------------------------:|:-------------------------:
-![](https://i.imgur.com/ixdFQMe.png)  | There is no instance segmentation for uniform adaptive sampling because, in a real-life scenario, sampling uniformly can miss periodicity in shapes. Due to this issue, I ignored implementation for Instance Segmentation
+![](https://i.imgur.com/ixdFQMe.png)  | There is no instance segmentation for uniform adaptive sampling because, <br>in a real-life scenario, sampling uniformly can miss periodicity in shapes. <br>Due to this issue, I ignored implementation for Instance Segmentation
 
 
 ## Random Sampling
@@ -65,7 +65,7 @@ Bounding Box            |
 #### Example
 Bounding Box            | Instance Segmentation
 :-------------------------:|:-------------------------:
-![](https://i.imgur.com/Nh0Bk3Y.png)  | As the preformance of all random adative sample algorithms proposed preform similarly only Metropolis Hastings proposals were adapted for instance segmentation 
+![](https://i.imgur.com/Nh0Bk3Y.png)  | As the preformance of all random adaptive sample algorithms proposed <br>preform similarly only Metropolis Hastings proposals were adapted for <br>instance segmentation 
 
 ## Metropolis Hastings
 Below are the functions found within **Met_Hastings.py**
