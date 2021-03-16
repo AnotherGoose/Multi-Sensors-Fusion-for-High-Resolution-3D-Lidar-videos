@@ -6,6 +6,7 @@ from scipy.interpolate import griddata
 from sklearn.metrics import mean_squared_error
 
 def walkIndex(prevI, max, sigma):
+    #generates an index proposal for the random walk metropolis hastings
     a = -1
     b = 1
     if prevI - sigma < 0:
