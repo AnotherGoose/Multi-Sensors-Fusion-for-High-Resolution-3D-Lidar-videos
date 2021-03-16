@@ -291,7 +291,7 @@ to sample.
 * **nWidth** - New sub-sampled width
 * **nHeight** - New sub-sampled height
 
-###checkRounding(limit, w, h)
+### checkRounding(limit, w, h)
 **checkRounding** makes sure the rounding for an index does not excede the limit provided, used to prevent out of range 
 exceptions due to rounding errors. 
 #### Inputs
