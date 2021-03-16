@@ -65,13 +65,13 @@ Bounding Box            |
 #### Example
 Bounding Box            | Instance Segmentation
 :-------------------------:|:-------------------------:
-![](https://i.imgur.com/Nh0Bk3Y.png)  | As the preformance of all random adaptive sample algorithms proposed <br>preform similarly only Metropolis Hastings proposals were adapted for <br>instance segmentation 
+![](https://i.imgur.com/Nh0Bk3Y.png)  | As the preformance of all random adaptive sample algorithms proposed <br>preform similarly only Metropolis-Hastings proposals were adapted for <br>instance segmentation 
 
-## Metropolis Hastings
+## Metropolis-Hastings
 Below are the functions found within **Met_Hastings.py**
 
 ### MetHastingsBBox(img, ROI, pixels, bConst, roiConst, N)
-**MetHastingsBBox** is the setup function to generate a feature map for the Metropolis Hastings algorithm for a **Bounding Box** adaptation. The feature map function is found within distribution utils.
+**MetHastingsBBox** is the setup function to generate a feature map for the Metropolis-Hastings algorithm for a **Bounding Box** adaptation. The feature map function is found within distribution utils.
 #### Inputs
 * **img** - openCV input image (depth map)
 * **ROI** - 2D numpy array with the x, y, width and height of the ROI stored respectively
@@ -80,10 +80,10 @@ Below are the functions found within **Met_Hastings.py**
 * **roiConst** - ROI constant weight for feature map (detected objects) 
 * **N** - Iterations to provide to Met Hastings algorithm for number of proposal points for each new index found
 #### Outputs
-* **MH** - - The new sub-sampled output (not-interpolated)
+* **MH** - The new sub-sampled output (not-interpolated)
 
 ### MetHastingsInstance(img, mask, pixels, bConst, roiConst, N)
-**MetHastingsBBox** is the setup function to generate a feature map for the Metropolis Hastings algorithm for an **Instance Segmentation** adaptation. The feature map function is found within distribution utils.
+**MetHastingsBBox** is the setup function to generate a feature map for the Metropolis-Hastings algorithm for an **Instance Segmentation** adaptation. The feature map function is found within distribution utils.
 #### Inputs
 * **img** - openCV input image (depth map)
 * **mask** - A mask defined by Mask-RCNN defining areas either true of false depending if an object is detected within that pixel or not
@@ -95,13 +95,40 @@ Below are the functions found within **Met_Hastings.py**
 * **MH** - The new sub-sampled output (not-interpolated)
 
 ### MetHastings(img, pixels, fMap, N)
+**MetHastings** is a function used to apply the Metropolis-Hastings Markov chain Monte Carlo method to obtain a guided sequence 
+of random samples. This process randomly samples a set of pixels within a scene and preforms an **N** 
+number of proposal areas to change the intial randomly chosen index to a more favourable placement, based upon a weighted feature map.
+
+The following psuedo code outlines the execution of this method:
+
+* Create a feature map of weighting ROI and background appropriately
+* Loop for a number of pixels
+    * Randomly choose x and y indexes
+    * **n** = image(x, y);
+    * Loop **N** number of iterations
+      * Randomly choose proposal x’ and y’ indexes
+      * **n'** = image(x’, y’);
+      * **α** = featuremap(**n’**)/featuremap(**n**)
+      * sample r uniformly between 0 and 1
+      * r is a uniform number between 0 and 1
+      * If r < **α** accept this new proposal<br>
+        (**n’** = **n**)
+
+Where: <br>
+* **N** is the number of proposals to investigate for each uniformly sampled point<br>
+* **n** is the previous point<br>
+* **n’** is the new point proposal<br>
+* **α** is the ration between the new and old point within the feature map<br>
+* **σ** is the variance of the new proposals from the original position.
+
+
 #### Inputs
-* **img**
-* **AS**
-* **fMap**
-* **N**
+* **img** - openCV input image (depth map)
+* **pixels** - New amount of pixels to sub-sample the input image by
+* **fMap** - Feature map which has been pre-weighted
+* **N** - Iterations to provide to Metropolis-Hastings algorithm for number of proposal points for each individual index
 #### Outputs
-* **AS**
+* **AS** - The new sub-sampled output (not-interpolated)
 #### Example
 
 Bounding Box            |  Instance Segmentation
@@ -109,7 +136,7 @@ Bounding Box            |  Instance Segmentation
 ![](https://i.imgur.com/XxyqYDi.png)  |  ![](https://i.imgur.com/RaARUA0.png)
 
 ### RandomWalkMetHastingsBBox(img, ROI, pixels, bConst, roiConst, sigma, N)
-**RandomWalkMetHastingsBBox** is the setup function to generate a feature map and a uniform spread of pixels for the Random Walk Metropolis Hastings algorithm for an **Bounding Box** adaptation. The feature map and uniform spread function is found within distribution utils.
+**RandomWalkMetHastingsBBox** is the setup function to generate a feature map and a uniform spread of pixels for the Random Walk Metropolis-Hastings algorithm for an **Bounding Box** adaptation. The feature map and uniform spread function is found within distribution utils.
 #### Inputs
 * **img** - openCV input image (depth map)
 * **ROI** - 2D numpy array with the x, y, width and height of the ROI stored respectively
@@ -122,7 +149,7 @@ Bounding Box            |  Instance Segmentation
 * **RWMH** - The new sub-sampled output (not-interpolated)
 
 ### RandomWalkMetHastingsInstance(img, mask, pixels, bConst, roiConst, sigma, N)
-**RandomWalkMetHastingsInstance** is the setup function to generate a feature map and a uniform spread of pixels for the Random Walk Metropolis Hastings algorithm for an **Instance segmentation** adaptation. The feature map and uniform spread function is found within distribution utils.
+**RandomWalkMetHastingsInstance** is the setup function to generate a feature map and a uniform spread of pixels for the Random Walk Metropolis-Hastings algorithm for an **Instance segmentation** adaptation. The feature map and uniform spread function is found within distribution utils.
 #### Inputs
 * **img** - openCV input image (depth map)
 * **mask** - A mask defined by Mask-RCNN defining areas either true of false depending if an object is detected within that pixel or not
@@ -135,21 +162,21 @@ Bounding Box            |  Instance Segmentation
 * **RWMH** - The new sub-sampled output (not-interpolated)
 
 ### RandomWalkMetHastings(img, AS, fMap, sigma, N)
-**RandomWalkMetHastings**  implements the adaptation of the statistical distribution Metropolis Hastings dubbed Random Walk Metropolis Hastings.
-This process is where the scene is uniformly sampled, and proposal points are compared against the previous point proposal on the feature map, which is weighted appropriately and either accepted or rejected, depending on a random variable.
-This results in the uniformly sampled points being 'drifted' towards regions of interest. The 'drifting' of these points are dependant on a variance provided.
+**RandomWalkMetHastings**  implements the adaptation of the statistical distribution Metropolis-Hastings dubbed, Random Walk Metropolis-Hastings.
+This process is where the scene is uniformly sampled, and proposal points are compared against the previous proposal points on the feature map, which is weighted appropriately and either accepted or rejected, depending on a random variable.
+This results in the uniformly sampled points being 'drifted' towards regions of interest. The 'drifting' of these points are dependant on a variance which is defined in the function inputs.
 
 The following psuedo code outlines the execution of this method:
 * Uniformly sample the scene
 * Create a feature map of weighting ROI and background appropriately.
 * Start a loop through all uniformly sampled points.
-    * Loop N number of iterations
+    * Loop **N** number of iterations
         * New proposal for this uniformly sampled point is:<br>
-          n’ = n + round(σ*randn(1,1))
-        * α = featuremap(n’)/featuremap(n)
+          **n’** = **n** + round(**σ***randn(1,1))
+        * **α** = featuremap(**n’**)/featuremap(**n**)
 	    * r is a uniform number between 0 and 1
-	    * If r < α accept this new proposal <br>
-        (n’ = n)<br>
+	    * If r < **α** accept this new proposal <br>
+        (**n’** = **n**)<br>
 
 Where: <br>
 * **N** is the number of proposals to investigate for each uniformly sampled point<br>
