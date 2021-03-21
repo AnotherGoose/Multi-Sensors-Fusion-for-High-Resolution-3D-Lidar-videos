@@ -6,7 +6,8 @@ baseName = os.path.basename(__file__)
 dir = __file__
 dir = dir[:-(len(baseName))]
 
-os.chdir(dir)
+print(dir)
+#os.chdir(dir)
 pDir = os.path.abspath(os.getcwd())
 os.chdir('Adaptive_Sampling/Task_Based_AS/')
 iDir = os.path.abspath(os.getcwd())
@@ -45,12 +46,12 @@ recognition = int(recognition)
 uInput = "Placeholder"
 valid = False
 while valid != True:
-    uInput = int(input("What precentage of the video would you like to sample (1% - 100%):"))
-    if uInput < 1 or uInput > 100:
-        print("Please input a value between 1 - 100")
+    uInput = int(input("How many points of the video would you like to sample "))
+    if uInput < 1:
+        print("Please input a value greater than 0")
     else:
         valid = True
-prec = uInput
+pixels = int(uInput)
 
 #Display Input
 uInput = "Placeholder"
@@ -68,4 +69,4 @@ while uInput != "0" or uInput != "1":
         print("Please input a valid number")
 
 
-videoDetection(inputRGB, inputDepth, outputDepthPath, outputRecogPath, prec, recognition, pCloud, displayOutput)
+videoDetection(inputRGB, inputDepth, outputDepthPath, outputRecogPath, pixels, recognition, pCloud, displayOutput)

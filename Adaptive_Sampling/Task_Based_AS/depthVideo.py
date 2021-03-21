@@ -43,7 +43,7 @@ def savePoints(fileName, array):
             scipy.io.savemat(f, {name: (x, y, z)})
     return 0
 
-def videoDetection(inputRGBVideoPath, inputDepthVideoPath, outputDepthPath, outputRecogPath, precentage, detectionType, pointCloud, displayOutput):
+def videoDetection(inputRGBVideoPath, inputDepthVideoPath, outputDepthPath, outputRecogPath, pixels, detectionType, pointCloud, displayOutput):
     # detectionType   0 - Bounding box
     #                 1 - Instance segmentation
 
@@ -76,9 +76,9 @@ def videoDetection(inputRGBVideoPath, inputDepthVideoPath, outputDepthPath, outp
     depth = cv2.cvtColor(depth, cv2.COLOR_GRAY2RGB)
 
     #Calculated Desired Pixels
-    h, w, c = img.shape
-    pTot = h * w
-    pixels = int(pTot * (precentage/100))
+    #h, w, c = img.shape
+    #pTot = h * w
+    #pixels = int(pTot * (precentage/100))
 
     initial = True
     frames = 0
