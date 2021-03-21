@@ -46,9 +46,9 @@ recognition = int(recognition)
 uInput = "Placeholder"
 valid = False
 while valid != True:
-    uInput = int(input("How many points of the video would you like to sample "))
-    if uInput < 1:
-        print("Please input a value greater than 0")
+    uInput = int(input("How many points of the video would you like to sample"))
+    if uInput < 2:
+        print("Please input a value greater than 1")
     else:
         valid = True
 pixels = int(uInput)
