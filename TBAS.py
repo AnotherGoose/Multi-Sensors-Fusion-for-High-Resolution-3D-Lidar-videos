@@ -14,7 +14,7 @@ iDir = os.path.abspath(os.getcwd())
 
 #Import Libraries
 sys.path.append(os.path.join(iDir))
-from depthVideo import videoDetection
+from Task_Based_AS import videoDetection
 
 # Make Definitions
 boundingBox = 0
