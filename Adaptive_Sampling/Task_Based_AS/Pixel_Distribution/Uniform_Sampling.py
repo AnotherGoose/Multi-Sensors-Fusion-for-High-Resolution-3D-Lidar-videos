@@ -28,9 +28,6 @@ def uniformAS(img, ROI, nPixels, rPort):
     #Can be an input
     bPort = 1 - rPort
 
-    rPixels = round(nPixels * rPort)
-    bPixels = round(nPixels * bPort)
-
     #Pixels Remaining
     pRem = 0
 
@@ -40,6 +37,14 @@ def uniformAS(img, ROI, nPixels, rPort):
         x, y, w, h = r
         roiSum += ((w + 1) * (h + 1))
 
+    rPortion = (roiSum/(imH * imW))
+    if (rPortion > rPort):
+        rPort = rPortion
+        bPort = 1 - rPort
+        print("Warning: ROI are larger than the Adaptive Sampling portion provided, changing ROI port to the same as ROI")
+
+    rPixels = round(nPixels * rPort)
+    bPixels = round(nPixels * bPort)
     for r in ROI:
         x, y, w, h = r
         roiPort = ((w + 1) * (h + 1))/roiSum

@@ -97,13 +97,15 @@ def videoDetection(inputRGBVideoPath, inputDepthVideoPath, outputDepthPath, outp
             fName = 'outputBB.mat'
             if detected:
                 #outputDepth = M_H.RandomWalkMetHastingsBBox(depth, boundingROI, pixels, 1, 10, 100, 25)
-                outputDepth = M_H.RandomWalkMetHastingsBBox(depth, boundingROI, pixels, 1, 10, 1000, 25)
+                #outputDepth = M_H.RandomWalkMetHastingsBBox(depth, boundingROI, pixels, 1, 10, 1000, 25)
+                #Uniformly Sample the ROI at 80% (Use the same pixels as in uniform sampling to enusure the pixels for random sampling and uniform adaptive sampling are the same)
+                outputDepth = M_H.AdaptiveRandomWalkMetHastingsBBox(depth, boundingROI, pUsed, 0.8)
             else:
                 outputDepth = R_S.randomS(depth, pUsed)
                 outputRecog = img
 
         elif detectionType == instanceSegmentation:
-            # Instance
+            # Instance Segmentation
             detected, instanceROI, instanceMasks, outputRecog = getMRCNNPredsImg(img)
             fName = 'outputInst.mat'
             if detected:
@@ -139,16 +141,6 @@ def videoDetection(inputRGBVideoPath, inputDepthVideoPath, outputDepthPath, outp
 
         h, w = outputDepth.shape
 
-        #Remove this for display
-        '''
-        if pointCloud:
-            for i in range(h):
-                for j in range(w):
-                    if math.isnan(outputDepth[i][j]):
-                        outputDepth[i][j] = 0
-            outputDepth = outputDepth.astype(np.uint8)
-        else:
-        '''
         outputDepth = utils.nInterp2D(pUsed, outputDepth)
 
         if displayOutput:
@@ -189,7 +181,7 @@ if __name__ == "__main__":
     print(outputDepthPath)
     print(outputRecogPath)
     pCloud = True
-    prec = 3
+    prec = 10000
     displayOutput = True
 
     os.chdir(initialDir)
