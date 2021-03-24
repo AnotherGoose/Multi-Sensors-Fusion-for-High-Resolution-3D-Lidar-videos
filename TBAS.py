@@ -46,7 +46,7 @@ recognition = int(recognition)
 uInput = "Placeholder"
 valid = False
 while valid != True:
-    uInput = int(input("How many points of the video would you like to sample"))
+    uInput = int(input("How many points of the video would you like to sample:\n"))
     if uInput < 2:
         print("Please input a value greater than 1")
     else:
@@ -70,3 +70,4 @@ while uInput != "0" or uInput != "1":
 
 
 videoDetection(inputRGB, inputDepth, outputDepthPath, outputRecogPath, pixels, recognition, pCloud, displayOutput)
+print("Process Complete")
