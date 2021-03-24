@@ -4,24 +4,15 @@ import os
 import sys
 import scipy.io
 
+#Change directory for Matlab Script
+baseName = os.path.basename(__file__)
+dir = __file__
+dir = dir[:-(len(baseName))]
+
+os.chdir(dir)
 initialDir = os.path.abspath(os.getcwd())
 os.chdir('../../')
 projectDir = os.path.abspath(os.getcwd())
-
-#Import Images
-#imgName = "Mannequin.png"
-imgName = "frame_0003.png"
-
-os.chdir("Input_RGB")
-img = cv2.imread(imgName)
-
-os.chdir("..")
-
-os.chdir("Input_Depth")
-depth = cv2.imread(imgName)
-depth = cv2.cvtColor(depth, cv2.COLOR_RGB2GRAY)
-
-os.chdir(initialDir)
 
 #Import Libraries
 sys.path.append(os.path.join(initialDir, "YOLO"))
@@ -29,33 +20,16 @@ from YOLO import getYOLOPredsImg
 sys.path.append(os.path.join(initialDir, "Mask_RCNN"))
 from Mask_RCNN import getMRCNNPredsImg
 sys.path.append(os.path.join(initialDir, "Pixel_Distribution"))
-
-#Import point distribution libraries
 import Distribution_Utils as utils
 import Met_Hastings as M_H
-#import Random_Sampling
-#import Unifrom_Sampling
+import Random_Sampling as R_S
+import Uniform_Sampling as U_S
 
-#Remove all detections lower than this confidence
-cThresh = 0.5
-
-#Removing all detections having overlap higher than this value
-oThresh = 0.3
-
-cuda = False
-
-detectedBB, boundingROI, outputRecog = getYOLOPredsImg(img, cThresh, oThresh, cuda)
-detectedI, instanceROI, instanceMasks, outputRecog = getMRCNNPredsImg(img)
-
-# Compress Masks
-instanceMask = utils.combineMasks(instanceMasks)
-
-# Make this a user input
-pixels = 5000
-pointCloud = True
-sheetName = "frame1"
-initial = True
-
+# Make Definitions
+boundingBox = 0
+instanceSegmentation = 1
+randomSampling = 2
+uniformSampling = 3
 
 def savePoints(fileName, array):
     frames, dim, length = array.shape
@@ -69,42 +43,146 @@ def savePoints(fileName, array):
             scipy.io.savemat(f, {name: (x, y, z)})
     return 0
 
-if __name__ == "__main__":
-    if detectedBB:
-        RWMHBB = M_H.RandomWalkMetHastingsBBox(depth, boundingROI, pixels, 1, 10, 100, 25)
-        cv2.imshow('RWMH-BB', RWMHBB)
-        pUsed = utils.nonNan(RWMHBB)
-        interpolatedRWMHBB = utils.nInterp2D(pUsed, RWMHBB)
-        cv2.imshow('InterpolatedBB', interpolatedRWMHBB)
+def videoDetection(inputRGBVideoPath, inputDepthVideoPath, outputDepthPath, outputRecogPath, pixels, detectionType, pointCloud, displayOutput):
+    # detectionType   0 - Bounding box
+    #                 1 - Instance segmentation
+
+    #Thresholds for detection
+    cThresh = 0.5
+    oThresh = 0.3
+
+    cuda = False
+
+    capRGB = cv2.VideoCapture(inputRGBVideoPath)
+    capDepth = cv2.VideoCapture(inputDepthVideoPath)
+
+
+    #Check if the input RGB video and depth video is opened properly
+    if (capRGB.isOpened() == False) or (capDepth.isOpened() == False):
+        print("Error opening video stream or file")
+        return
+
+    (successRGB, img) = capRGB.read()
+    (successDepth, depth) = capDepth.read()
+
+    depth = cv2.cvtColor(depth, cv2.COLOR_RGB2GRAY)
+
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+
+    vidDepth = cv2.VideoWriter(outputDepthPath, fourcc, capDepth.get(cv2.CAP_PROP_FPS), (depth.shape[1], depth.shape[0]), 0)
+
+    vidRecog = cv2.VideoWriter(outputRecogPath, fourcc, capDepth.get(cv2.CAP_PROP_FPS), (img.shape[1], img.shape[0]), True)
+
+    depth = cv2.cvtColor(depth, cv2.COLOR_GRAY2RGB)
+
+    #Calculated Desired Pixels
+    #h, w, c = img.shape
+    #pTot = h * w
+    #pixels = int(pTot * (precentage/100))
+
+    initial = True
+    frames = 0
+
+    while successRGB and successDepth:
+        depth = cv2.cvtColor(depth, cv2.COLOR_RGB2GRAY)
+
+
+        # Fix for when pixels and pUsed don't match up for saving pClouds
+        pUsed = utils.nonNan(U_S.uniformS(depth, pixels))
+        # End Fix
+
+        if detectionType == boundingBox:
+            # Bounding Box
+            detected, boundingROI, outputRecog = getYOLOPredsImg(img, cThresh, oThresh, cuda)
+            fName = 'outputBB.mat'
+            if detected:
+                #outputDepth = M_H.RandomWalkMetHastingsBBox(depth, boundingROI, pixels, 1, 10, 100, 25)
+                #outputDepth = M_H.RandomWalkMetHastingsBBox(depth, boundingROI, pixels, 1, 10, 1000, 25)
+                #Uniformly Sample the ROI at 80% (Use the same pixels as in uniform sampling to enusure the pixels for random sampling and uniform adaptive sampling are the same)
+                outputDepth = M_H.AdaptiveRandomWalkMetHastingsBBox(depth, boundingROI, pUsed, 0.8)
+            else:
+                outputDepth = R_S.randomS(depth, pUsed)
+                outputRecog = img
+
+        elif detectionType == instanceSegmentation:
+            # Instance Segmentation
+            detected, instanceROI, instanceMasks, outputRecog = getMRCNNPredsImg(img)
+            fName = 'outputInst.mat'
+            if detected:
+                # Compress Masks
+                instanceMask = utils.combineMasks(instanceMasks)
+                outputDepth =  M_H.RandomWalkMetHastingsInstance(depth, instanceMask, pixels, 1, 10, 1000, 25)
+            else:
+                #If there is no object detected, preform random sampling
+                outputDepth = R_S.randomS(depth, pUsed)
+                outputRecog = img
+
+        elif detectionType == randomSampling:
+            # Random Sampling
+            outputDepth = R_S.randomS(depth, pixels)
+            outputRecog = img
+
+        elif detectionType == uniformSampling:
+            # Uniform Sampling
+            outputDepth = U_S.uniformS(depth, pixels)
+            outputRecog = img
 
         if pointCloud:
-            frames = 0
-            x, y, z = utils.seperateArrayPC(RWMHBB, pUsed)
-            fileName = 'outputBB.mat'
-            frames = np.zeros((1, 3, pUsed))
-            frames[0] = x, y, z
-            initial = False
-            savePoints(fileName, frames)
-    else:
-        print("YOLO did not detect an object")
+            x, y, z = utils.seperateArrayPC(outputDepth, pUsed)
+            fileName = projectDir + '/Sampling_Output/' + fName
+            if initial:
+                frames = np.zeros((1, 3, pUsed))
+                frames[0] = x, y, z
+                initial = False
+            else:
+                newDim = np.vstack([x, y, z])
+                newDim = newDim[np.newaxis, :, :]
+                frames = np.append(frames, newDim, axis=0)
 
-    if detectedI:
-        RWMHI = M_H.RandomWalkMetHastingsInstance(depth, instanceMask, pixels, 1, 10, 1000, 25)
-        cv2.imshow('RWMH-Instance', RWMHI)
-        pUsed = utils.nonNan(RWMHI)
-        interpolatedRWMHI = utils.nInterp2D(pUsed, RWMHI)
-        cv2.imshow('InterpolatedInst', interpolatedRWMHI)
+        h, w = outputDepth.shape
 
-        if pointCloud:
-            frames = 0
-            x, y, z = utils.seperateArrayPC(RWMHI, pUsed)
-            fileName = 'outputInst.mat'
-            frames = np.zeros((1, 3, pUsed))
-            frames[0] = x, y, z
-            initial = False
-            savePoints(fileName, frames)
-    else:
-        print("Mask-RCNN did not detect an object")
+        outputDepth = utils.nInterp2D(pUsed, outputDepth)
 
-    cv2.waitKey(0)
+        if displayOutput:
+            cv2.imshow("ModelOutput", outputDepth)
+            cv2.imshow("Predictions", outputRecog)
+            key = cv2.waitKey(1) & 0xFF
+            # if the `q` key was pressed, break the loop
+            if key == ord("q"):
+                break
+
+        vidDepth.write(outputDepth)
+        vidRecog.write(outputRecog)
+
+        (successDepth, depth) = capDepth.read()
+        (successRGB, img) = capRGB.read()
+
+    if pointCloud:
+        #Save points if there is a point cloud
+        savePoints(fileName, frames)
+
+    capDepth.release()
+    capRGB.release()
+    vidDepth.release()
+    vidRecog.release()
     cv2.destroyAllWindows()
+    return 0
+
+
+if __name__ == "__main__":
+
+    inputDepth = projectDir + '/Input_Depth/NoisyFramesHN_15fps.mp4'
+    inputRGB = projectDir + '/Input_RGB/Frames_15fps.mp4'
+    outputDepthPath = projectDir + '/Sampling_Output/depthOutputHN.mp4'
+    outputRecogPath = projectDir + '/Sampling_Output/recogOutput.mp4'
+    detectionMethod = boundingBox
+    print(inputDepth)
+    print(inputRGB)
+    print(outputDepthPath)
+    print(outputRecogPath)
+    pCloud = True
+    prec = 10000
+    displayOutput = True
+
+    os.chdir(initialDir)
+    videoDetection(inputRGB, inputDepth, outputDepthPath, outputRecogPath, prec, detectionMethod, pCloud, displayOutput)
