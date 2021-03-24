@@ -1,6 +1,5 @@
 import cv2
 import os
-from imutils.video import FPS
 import numpy as np
 
 baseName = os.path.basename(__file__)
@@ -41,7 +40,6 @@ def getYOLOPredsImg(img, conThresh = 0.5, overThresh = 0.3, cuda = False):
         print("Error opening file")
         return
 
-    fps = FPS().start()
     # frame = imutils.resize(frame, width=640)
 
     # frame = imutils.resize(frame, width=640)
@@ -97,7 +95,6 @@ def getYOLOPredsImg(img, conThresh = 0.5, overThresh = 0.3, cuda = False):
             ROI[c] = boxes[i]
             c += 1
             #get bbox array
-    fps.stop()
 
     display = True
 
@@ -113,9 +110,6 @@ def getYOLOPredsImg(img, conThresh = 0.5, overThresh = 0.3, cuda = False):
                 text = "{}: {:.4f}".format(labels[classIDs[i]], confidences[i])
                 cv2.putText(preds, text, (x, y - 5),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
-
-
-    print("Elasped time: {:.2f}".format(fps.elapsed()))
 
     #Check if anything was detected
     try:

@@ -3,6 +3,7 @@ import numpy as np
 import os
 import sys
 import scipy.io
+from imutils.video import FPS
 
 #Change directory for Matlab Script
 baseName = os.path.basename(__file__)
@@ -82,8 +83,9 @@ def videoDetection(inputRGBVideoPath, inputDepthVideoPath, outputDepthPath, outp
 
     initial = True
     frames = 0
-
+    fCount = 1
     while successRGB and successDepth:
+        fps = FPS().start()
         depth = cv2.cvtColor(depth, cv2.COLOR_RGB2GRAY)
 
 
@@ -99,7 +101,7 @@ def videoDetection(inputRGBVideoPath, inputDepthVideoPath, outputDepthPath, outp
                 #outputDepth = M_H.RandomWalkMetHastingsBBox(depth, boundingROI, pixels, 1, 10, 100, 25)
                 #outputDepth = M_H.RandomWalkMetHastingsBBox(depth, boundingROI, pixels, 1, 10, 1000, 25)
                 #Uniformly Sample the ROI at 80% (Use the same pixels as in uniform sampling to enusure the pixels for random sampling and uniform adaptive sampling are the same)
-                outputDepth = M_H.AdaptiveRandomWalkMetHastingsBBox(depth, boundingROI, pUsed, 0.8)
+                outputDepth = M_H.AdaptiveRandomWalkMetHastingsBBox(depth, boundingROI, pUsed, 0.6)
             else:
                 outputDepth = R_S.randomS(depth, pUsed)
                 outputRecog = img
@@ -117,15 +119,7 @@ def videoDetection(inputRGBVideoPath, inputDepthVideoPath, outputDepthPath, outp
                 outputDepth = R_S.randomS(depth, pUsed)
                 outputRecog = img
 
-        elif detectionType == randomSampling:
-            # Random Sampling
-            outputDepth = R_S.randomS(depth, pixels)
-            outputRecog = img
-
-        elif detectionType == uniformSampling:
-            # Uniform Sampling
-            outputDepth = U_S.uniformS(depth, pixels)
-            outputRecog = img
+        fps.stop()
 
         if pointCloud:
             x, y, z = utils.seperateArrayPC(outputDepth, pUsed)
@@ -157,6 +151,8 @@ def videoDetection(inputRGBVideoPath, inputDepthVideoPath, outputDepthPath, outp
         (successDepth, depth) = capDepth.read()
         (successRGB, img) = capRGB.read()
 
+        print("Frame {:d} sample time: {:.2f}s".format(fCount, fps.elapsed()))
+        fCount += 1
     if pointCloud:
         #Save points if there is a point cloud
         savePoints(fileName, frames)

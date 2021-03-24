@@ -1,7 +1,7 @@
 
 import os
 import csv
-from imutils.video import FPS
+
 from mrcnn import utils
 import mrcnn.model as modellib
 from mrcnn import visualize_cv
@@ -35,7 +35,7 @@ def getMRCNNPredsImg(img):
     config = InferenceConfig()
 
 
-    fps = FPS().start()
+
 
     # Create model object in inference mode.
     model = modellib.MaskRCNN(mode="inference", model_dir=modelDir, config=config)
@@ -55,7 +55,7 @@ def getMRCNNPredsImg(img):
 
     # Run detection
     results = model.detect([img], verbose=1)
-    fps.stop()
+
 
     # Visualize results
     r = results[0]
@@ -89,7 +89,7 @@ def getMRCNNPredsImg(img):
         h = y2 - y1
         ROI[i] = [x1, y1, w, h]
 
-    print("Elasped time: {:.2f}".format(fps.elapsed()))
+
 
     os.chdir("../")
 
