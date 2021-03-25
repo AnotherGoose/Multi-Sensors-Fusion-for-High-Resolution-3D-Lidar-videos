@@ -90,8 +90,10 @@ def RandomWalkMetHastingsInstance(img, mask, pixels, bConst, roiConst, sigma, N)
     return RWMH
 
 def AdaptiveRandomWalkMetHastingsBBox(img, ROI, pixels, rConst):
-    sigma = 5
-    N = 3
+    #Change walk (drift)
+    sigma = 10
+    #Change number of point proposals
+    N = 5
     bConst = rConst - 1
     AS = U_S.uniformAS(img, ROI, pixels, rConst)
     fMap = utils.createFeatureMapBBox(img, ROI, bConst, rConst)
@@ -132,18 +134,18 @@ def RandomWalkMetHastings(img, AS, fMap, sigma, N):
 if __name__ == "__main__":
     import cv2
     #Mannequin
-    #ROI = np.array([[27, 8, 95, 127]])
-    #depth = cv2.imread("Mannequin.png")
+    ROI = np.array([[27, 8, 95, 127]])
+    depth = cv2.imread("Mannequin.png")
     #Frame
-    ROI = np.array([[278, 172, 119, 179]])
-    depth = cv2.imread("FrameHN.png")
+    #ROI = np.array([[278, 172, 119, 179]])
+    #depth = cv2.imread("FrameHN.png")
     depth = cv2.cvtColor(depth, cv2.COLOR_RGB2GRAY)
-    interpolate = True
+    interpolate = False
 
     pixels = 10000
 
     RMWH = RandomWalkMetHastingsBBox(depth, ROI, pixels, 1, 10, 100, 25)
-    ARWMH = AdaptiveRandomWalkMetHastingsBBox(depth, ROI, pixels, 0.8)
+    ARWMH = AdaptiveRandomWalkMetHastingsBBox(depth, ROI, pixels, 0.6)
     MH = MetHastingsBBox(depth, ROI, pixels, 1, 10, 5)
 
     row, col = depth.shape
