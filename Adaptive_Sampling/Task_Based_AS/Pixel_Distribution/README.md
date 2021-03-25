@@ -208,6 +208,23 @@ Bounding Box            |  Instance Segmentation
 :-------------------------:|:-------------------------:
 ![](https://i.imgur.com/FfzvicK.png)  |  ![](https://i.imgur.com/d6rGUF0.png)
 
+### AdaptiveRandomWalkMetHastingsBBox(img, ROI, pixels, rConst)
+**AdaptiveRandomWalkMetHastingsBBox** preforms uniform adaptive sampling on a bounding box implementation of an image and 
+then, using random walk metropolis hastings drifts the points towards the ROI. This adaptation allows for Uniform Adaptive 
+Sampling work within a real-life scenario as sampling is now non-uniform. The drift and number of preposal points are constant 
+to allow for minimal drifting from the already adaptively sampled scene
+#### Inputs
+* **img** - OpenCV input image (depth map)
+* **ROI** - 2D numpy array with the x, y, width and height of the ROI stored respectively
+* **nPixels** - New amount of pixels to uniformly sub-sample the input image 
+* **rPort** - The portion of the total sub-sample pixels to allocate to the ROI's (0 > n < 1)
+#### Outputs
+* **ARWMH** - The new sub-sampled output (not-interpolated)
+#### Examples
+Bounding Box            | Instance Segmentation
+:-------------------------:|:-------------------------:
+![](https://i.imgur.com/bQKQz4V.png)  | There is no instance segmentation for adaptive random walk metropolis hastings <br> due to the nature of uniform adaptive sampling defining the original points, <br> making it unable to be adapted for a mask.
+
 ## Distribution Utilities
 Below are the functions found within **Distribution_Utils.py**
 
