@@ -52,8 +52,6 @@ def videoDetection(inputRGBVideoPath, inputDepthVideoPath, outputDepthPath, outp
     cThresh = 0.5
     oThresh = 0.3
 
-    cuda = True
-
     capRGB = cv2.VideoCapture(inputRGBVideoPath)
     capDepth = cv2.VideoCapture(inputDepthVideoPath)
 
@@ -95,7 +93,7 @@ def videoDetection(inputRGBVideoPath, inputDepthVideoPath, outputDepthPath, outp
 
         if detectionType == boundingBox:
             # Bounding Box
-            detected, boundingROI, outputRecog = getYOLOPredsImg(img, cThresh, oThresh, cuda)
+            detected, boundingROI, outputRecog = getYOLOPredsImg(img, cThresh, oThresh)
             fName = 'outputBB.mat'
             if detected:
                 #outputDepth = M_H.RandomWalkMetHastingsBBox(depth, boundingROI, pixels, 1, 10, 100, 25)

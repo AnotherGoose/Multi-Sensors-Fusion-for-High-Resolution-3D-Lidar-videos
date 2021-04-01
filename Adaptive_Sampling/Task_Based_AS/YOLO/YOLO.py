@@ -9,14 +9,27 @@ dir = dir[:-(len(baseName))]
 os.chdir(dir)
 cDir = os.path.abspath(os.getcwd())
 
-def getYOLOPredsImg(img, conThresh = 0.5, overThresh = 0.3, cuda = False):
+def is_cuda_cv(): # 1 == using cuda, 0 = not using cuda
+    try:
+        count = cv2.cuda.getCudaEnabledDeviceCount()
+        if count > 0:
+            return 1
+        else:
+            return 0
+    except:
+        return 0
+
+def getYOLOPredsImg(img, conThresh = 0.5, overThresh = 0.3):
 
     yoloConfigPath = cDir + '/Model_Data/yolov4.cfg'
     yoloWeightsPath = cDir + '/Model_Data/yolov4.weights'
 
     net = cv2.dnn.readNetFromDarknet(yoloConfigPath, yoloWeightsPath)
 
-    if cuda:
+    cuda = is_cuda_cv()
+
+    if cuda == 1:
+        print("OpenCV CUDA Enabled")
         net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
         net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
 
