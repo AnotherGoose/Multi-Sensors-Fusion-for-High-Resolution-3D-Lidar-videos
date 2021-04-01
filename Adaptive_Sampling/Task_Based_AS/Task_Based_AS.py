@@ -52,7 +52,7 @@ def videoDetection(inputRGBVideoPath, inputDepthVideoPath, outputDepthPath, outp
     cThresh = 0.5
     oThresh = 0.3
 
-    cuda = False
+    cuda = True
 
     capRGB = cv2.VideoCapture(inputRGBVideoPath)
     capDepth = cv2.VideoCapture(inputDepthVideoPath)
@@ -161,7 +161,8 @@ def videoDetection(inputRGBVideoPath, inputDepthVideoPath, outputDepthPath, outp
     capRGB.release()
     vidDepth.release()
     vidRecog.release()
-    cv2.destroyAllWindows()
+    if displayOutput:
+        cv2.destroyAllWindows()
     return 0
 
 
