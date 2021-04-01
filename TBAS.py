@@ -1,5 +1,6 @@
 import os
 import sys
+from imutils.video import FPS
 
 #Change directory for Matlab Script
 baseName = os.path.basename(__file__)
@@ -68,6 +69,8 @@ while uInput != "0" or uInput != "1":
     if uInput != "0" or uInput != "1":
         print("Please input a valid number")
 
-
+fps = FPS().start()
 videoDetection(inputRGB, inputDepth, outputDepthPath, outputRecogPath, pixels, recognition, pCloud, displayOutput)
+fps.stop()
 print("Process Complete")
+print("Process Took: {:.2f}s".format(fps.elapsed()))
