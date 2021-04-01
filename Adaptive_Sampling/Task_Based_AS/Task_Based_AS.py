@@ -44,6 +44,16 @@ def savePoints(fileName, array):
             scipy.io.savemat(f, {name: (x, y, z)})
     return 0
 
+def is_cuda_cv(): # 1 == using cuda, 0 = not using cuda
+    try:
+        count = cv2.cuda.getCudaEnabledDeviceCount()
+        if count > 0:
+            return 1
+        else:
+            return 0
+    except:
+        return 0
+
 def videoDetection(inputRGBVideoPath, inputDepthVideoPath, outputDepthPath, outputRecogPath, pixels, detectionType, pointCloud, displayOutput):
     # detectionType   0 - Bounding box
     #                 1 - Instance segmentation
@@ -74,14 +84,24 @@ def videoDetection(inputRGBVideoPath, inputDepthVideoPath, outputDepthPath, outp
 
     depth = cv2.cvtColor(depth, cv2.COLOR_GRAY2RGB)
 
-    #Calculated Desired Pixels
-    #h, w, c = img.shape
-    #pTot = h * w
-    #pixels = int(pTot * (precentage/100))
+    cuda = is_cuda_cv()
+    if cuda == 1:
+        print("OpenCV CUDA Enabled")
 
     initial = True
     frames = 0
     fCount = 1
+
+    yoloConfigPath = dir + 'YOLO/Model_Data/yolov4.cfg'
+    yoloWeightsPath = dir + 'YOLO/Model_Data/yolov4.weights'
+
+    if detectionType == boundingBox:
+        net = cv2.dnn.readNetFromDarknet(yoloConfigPath, yoloWeightsPath)
+        if cuda == 1:
+            print("OpenCV CUDA Enabled")
+            net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
+            net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
+
     while successRGB and successDepth:
         fps = FPS().start()
         depth = cv2.cvtColor(depth, cv2.COLOR_RGB2GRAY)
@@ -93,7 +113,7 @@ def videoDetection(inputRGBVideoPath, inputDepthVideoPath, outputDepthPath, outp
 
         if detectionType == boundingBox:
             # Bounding Box
-            detected, boundingROI, outputRecog = getYOLOPredsImg(img, cThresh, oThresh)
+            detected, boundingROI, outputRecog = getYOLOPredsImg(img, cThresh, oThresh, net)
             fName = 'outputBB.mat'
             if detected:
                 #outputDepth = M_H.RandomWalkMetHastingsBBox(depth, boundingROI, pixels, 1, 10, 100, 25)
