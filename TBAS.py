@@ -23,9 +23,9 @@ instanceSegmentation = 1
 randomSampling = 2
 uniformSampling = 3
 
-inputDepth = pDir + '/Input_Depth/NoisyFramesHN_15fps.mp4'
+inputDepth = pDir + '/Input_Depth/Frames_15fps.mp4'
 inputRGB = pDir + '/Input_RGB/Frames_15fps.mp4'
-outputDepthPath = pDir + '/Sampling_Output/depthOutputHN.mp4'
+outputDepthPath = pDir + '/Sampling_Output/depthOutput.mp4'
 outputRecogPath = pDir + '/Sampling_Output/recogOutput.mp4'
 pCloud = True
 
