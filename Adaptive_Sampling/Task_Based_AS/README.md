@@ -9,11 +9,16 @@ In the case of Task-Based Adaptive Sampling, objects detected provide ROI’s wh
 This adaptation of task based adaptive sampling used the pre-trained networks and provided weights from the following repositories 
 * Bounding Box - **YOLO** (<https://github.com/AlexeyAB/darknet>)
 * Instance Segmentation - **Mask-RCNN** (<https://github.com/matterport/Mask_RCNN>)
+
+## Cloud Execution
+To run Task-Based Adaptive Sampling without the Python dependencies follow the instructions on this repository to run on Google Colab with GPU acceleration:
+
+*   <https://github.com/AnotherGoose/OpenCV-CUDA-Colab>
+
 ## Getting Started
 It is highly recommended that you use Anaconda environments for the install and execution of this implementation for Task-Based Adaptive Sampling
 
 ### Prerequisites
-
 What things you need to install the software and how to install them
 
 - Python 3.6.13
