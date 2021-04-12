@@ -139,31 +139,37 @@ def videoDetection(inputRGBVideoPath, inputDepthVideoPath, outputDepthPath, outp
 
         fps.stop()
 
+        interOutputDepth = utils.nInterp2D(pUsed, outputDepth)
+
         if pointCloud:
             x, y, z = utils.seperateArrayPC(outputDepth, pUsed)
-            fileName = projectDir + '/Sampling_Output/' + fName
-            if initial:
-                frames = np.zeros((1, 3, pUsed))
-                frames[0] = x, y, z
-                initial = False
-            else:
-                newDim = np.vstack([x, y, z])
-                newDim = newDim[np.newaxis, :, :]
-                frames = np.append(frames, newDim, axis=0)
+        else:
+            pUsed = utils.nonNan(interOutputDepth)
+            x, y, z = utils.seperateArrayPC(interOutputDepth, pUsed)
 
-        h, w = outputDepth.shape
+        fileName = projectDir + '/Sampling_Output/' + fName
+        if initial:
+            frames = np.zeros((1, 3, pUsed))
+            frames[0] = x, y, z
+            initial = False
+        else:
+            newDim = np.vstack([x, y, z])
+            newDim = newDim[np.newaxis, :, :]
+            frames = np.append(frames, newDim, axis=0)
 
-        outputDepth = utils.nInterp2D(pUsed, outputDepth)
+        #h, w = outputDepth.shape
+
+
 
         if displayOutput:
-            cv2.imshow("ModelOutput", outputDepth)
+            cv2.imshow("ModelOutput", interOutputDepth)
             cv2.imshow("Predictions", outputRecog)
             key = cv2.waitKey(1) & 0xFF
             # if the `q` key was pressed, break the loop
             if key == ord("q"):
                 break
 
-        vidDepth.write(outputDepth)
+        vidDepth.write(interOutputDepth)
         vidRecog.write(outputRecog)
 
         (successDepth, depth) = capDepth.read()
@@ -171,7 +177,7 @@ def videoDetection(inputRGBVideoPath, inputDepthVideoPath, outputDepthPath, outp
 
         print("Frame {:d} sample time: {:.2f}s".format(fCount, fps.elapsed()))
         fCount += 1
-    if pointCloud:
+    #if pointCloud:
         #Save points if there is a point cloud
         savePoints(fileName, frames)
 
@@ -186,8 +192,8 @@ def videoDetection(inputRGBVideoPath, inputDepthVideoPath, outputDepthPath, outp
 
 if __name__ == "__main__":
 
-    inputDepth = projectDir + '/Input_Depth/NoisyFramesHN_15fps.mp4'
-    inputRGB = projectDir + '/Input_RGB/Frames_15fps.mp4'
+    inputDepth = projectDir + '/Input_Depth/DLR.mp4.mp4'
+    inputRGB = projectDir + '/Input_RGB/RLR.mp4.mp4'
     outputDepthPath = projectDir + '/Sampling_Output/depthOutputHN.mp4'
     outputRecogPath = projectDir + '/Sampling_Output/recogOutput.mp4'
     detectionMethod = boundingBox
