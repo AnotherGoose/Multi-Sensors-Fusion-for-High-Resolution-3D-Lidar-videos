@@ -22,7 +22,7 @@ It is highly recommended that you use Anaconda environments for the install and 
 What things you need to install the software and how to install them
 
 - Python 3.6.13
-- Tensorflow 1.14.0
+- Tensorflow 1.15.2
 - Keras 2.3.0
 - OpenCV-Python Latest Version
 - h5py 2.10.0
