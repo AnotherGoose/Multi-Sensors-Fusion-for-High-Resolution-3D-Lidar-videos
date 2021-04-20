@@ -10,12 +10,14 @@ addpath 'C:\Users\saifs\Desktop\Backup\UNI\LIDAR\Shared_4thYear_MEng_Projects\Sh
 addpath 'C:\Users\saifs\Desktop\LIDARTesting\TrainingDataset\comped'
 load Face_Depth_Reflectivity_Clean.mat DepthImage
 I = DepthImage;
+
+% I = imread('C:\Users\saifs\Desktop\LIDARTesting\MonkeyDepth400.png')
+% I = rgb2gray(I)
+    
 I = max(I, 0)
-% I = imread('in_00_160201_141702_depth_vi.png')
 I = double(I)
 Ext = 0;
-% I = double(I - 228)
-Iref = I/255;%% modified by AH
+Iref = I./255;%% modified by AH
 [row, col] = size(I);
 %% Change this to manually generated noise
     sigma = 50
@@ -23,7 +25,8 @@ Iref = I/255;%% modified by AH
 %     Inoisy = Inoisy./255;
 % fire = 0;
     cd C:\Users\saifs\Desktop\LIDARTesting
-    load net4
+%     load net4
+    load net5
     prenet = denoisingNetwork('DnCNN')
 %     denoisedI = denoiseImage(Inoisy, net4);          %Between 0 and 1
 
@@ -31,7 +34,7 @@ Iref = I/255;%% modified by AH
     sigma(loop) = 5*loop;
     Inoisy{loop} = max(0,  double(I) + sigma(loop)*randn(size(I)));
     Inoisy{loop} = Inoisy{loop}./255;
-    denoisedI{loop} = denoiseImage(Inoisy{loop}, net4);
+    denoisedI{loop} = denoiseImage(Inoisy{loop}, net5);
     denoisedIPre{loop} = denoiseImage(Inoisy{loop}, prenet);
     test{loop} = denoisedI{loop}
     testPre{loop} = denoisedIPre{loop}
@@ -58,41 +61,39 @@ for i = 2:1:row - 1
        diffNE = abs(denoisedI{loop}(i,j) - NorthEast);
        diffSW = abs(denoisedI{loop}(i,j) - SouthWest);
        diffSE = abs(denoisedI{loop}(i,j) - SouthEast);
-       
-       diffAvg = (diffN + diffW + diffE + diffS)/4;
-       
-%        if(diffAvg > 0.1)
-%            Ext = Ext + 1;
-%            denoisedI{loop}(i, j) = NaN;
-%            fire = fire + 1;
-%        end
-%        
-%         if(Ext >= 2)
-%             denoisedI{loop}(i, j) = NaN;
-%             fire = fire + 1;
-%         end
-%         
-       
-%         if(Ext >= 4)
-%             denoisedI{loop}(i, j) = NaN;
-%             denoisedI{loop}(i, j) = median(denoisedI{loop}(i-1:i+1,j-1:j+1), 'All','includenan');
+
         end
         
 end
 
 for i = 2:row - 1
     for j = 2:col - 1
- if(diffAvg > 0.09775)
+        Threshold = 0.05
+ if(diffN > Threshold)
            Ext = Ext + 1;
-           denoisedI{loop}(i, j) = NaN;
-           fire = fire + 1;
  end
+ if(diffE > Threshold)
+           Ext = Ext + 1;
+ end
+ if(diffS > Threshold)
+           Ext = Ext + 1;
+
+ end
+ if(diffW > Threshold)
+           Ext = Ext + 1;
+
+ end
+   if(Ext >= 1)
+            denoisedI{loop}(i, j) = NaN;
+    end
     end
 end
+
+
        
 MedianTest{loop} = denoisedI{loop}
-for i = 1:row
-    for j = 1:col
+for i = 2:row-1
+    for j = 2:col-1
     if any(isnan(denoisedI{loop}(i, j)))
         MedianTest{loop}(i, j) = nanmedian(denoisedI{loop}(i-1:i+1,j-1:j+1), 'All');
         tick = tick  + 1;
@@ -114,19 +115,19 @@ end
 % test{loop} = test{loop}.*255
 % denoisedI{loop} = denoisedI{loop}.*255
 % Inoisy{loop} = Inoisy{loop}.*255
-    x = kron(ones(row,1),(1:col)')
-    y = reshape(test{loop}(end:-1:1,:)',row*col,1)'
-    z = kron((1:row)',ones(col,1))
+    x = kron(ones(row,1),(1:col)');
+    y = reshape(test{loop}(end:-1:1,:)',row*col,1)';
+    z = kron((1:row)',ones(col,1));
 
-    subplot(2,10,loop)
-    scatter3(x, y, z, 50 ,'.'),
+    subplot(2,10,loop);
+    scatter3(x, y, z, 50 ,'.'),;
     
     
-    denoisedI{loop} = denoisedI{loop}.*255
-    MedianTest{loop} = MedianTest{loop}.*255
+    denoisedI{loop} = denoisedI{loop}.*255;
+    MedianTest{loop} = MedianTest{loop}.*255;
      
-    test{loop} = test{loop}.*255
-    end
+    test{loop} = test{loop}.*255;
+  end
     
 figure
 plot(SNR_data,RMSE_normalizedDataTest, 'r')
@@ -173,7 +174,7 @@ legend('RMSE(Denoised)','RMSE (Noisy)', 'Pretrained')
 figure
 
     x = kron(ones(row,1),(1:col)')
-    y = reshape(Inoisy{14}(end:-1:1,:)',row*col,1)'
+    y = reshape(Inoisy{4}(end:-1:1,:)',row*col,1)'
     z = kron((1:row)',ones(col,1))
 
     subplot(3,2,1)
@@ -181,7 +182,7 @@ figure
     title('Noisy PC (\sigma = 20)')
      
     x = kron(ones(row,1),(1:col)')
-    y = reshape(Inoisy{14}(end:-1:1,:)',row*col,1)'
+    y = reshape(Inoisy{4}(end:-1:1,:)',row*col,1)'
     z = kron((1:row)',ones(col,1))
 
     subplot(3,2,2)
@@ -190,7 +191,7 @@ figure
     
     
     x = kron(ones(row,1),(1:col)')
-    y = reshape(testPre{14}(end:-1:1,:)',row*col,1)'
+    y = reshape(testPre{4}(end:-1:1,:)',row*col,1)'
     z = kron((1:row)',ones(col,1))
 
     subplot(3,2,3)
@@ -198,7 +199,7 @@ figure
     title('Denoised PC (Pretrained)')
     
     x = kron(ones(row,1),(1:col)')
-    y = reshape(test{14}(end:-1:1,:)',row*col,1)'
+    y = reshape(test{4}(end:-1:1,:)',row*col,1)'
     z = kron((1:row)',ones(col,1))
 
     subplot(3,2,4)
@@ -207,7 +208,7 @@ figure
     
     
     x = kron(ones(row,1),(1:col)')
-    y = reshape(denoisedIPre{14}(end:-1:1,:)',row*col,1)'
+    y = reshape(denoisedIPre{4}(end:-1:1,:)',row*col,1)'
     z = kron((1:row)',ones(col,1))
 
     subplot(3,2,5)
@@ -215,7 +216,7 @@ figure
     title('Denoised PC (Pretrained + Filtered)')
     
     x = kron(ones(row,1),(1:col)')
-    y = reshape(denoisedI{14}(end:-1:1,:)',row*col,1)'
+    y = reshape(denoisedI{4}(end:-1:1,:)',row*col,1)'
     z = kron((1:row)',ones(col,1))
 
     subplot(3,2,6)
@@ -233,7 +234,7 @@ figure
     
         
     x = kron(ones(row,1),(1:col)')
-    y = reshape(test{12}(end:-1:1,:)',row*col,1)'
+    y = reshape(test{4}(end:-1:1,:)',row*col,1)'
     z = kron((1:row)',ones(col,1))
 
     subplot(1,3,1)
@@ -242,7 +243,7 @@ figure
     
     
     x = kron(ones(row,1),(1:col)')
-    y = reshape(denoisedI{12}(end:-1:1,:)',row*col,1)'
+    y = reshape(denoisedI{4}(end:-1:1,:)',row*col,1)'
     z = kron((1:row)',ones(col,1))
 
     subplot(1,3,2)
@@ -251,7 +252,7 @@ figure
     
     
     x = kron(ones(row,1),(1:col)')
-    y = reshape(MedianTest{12}(end:-1:1,:)',row*col,1)'
+    y = reshape(MedianTest{4}(end:-1:1,:)',row*col,1)'
     z = kron((1:row)',ones(col,1))
 
     subplot(1,3,3)

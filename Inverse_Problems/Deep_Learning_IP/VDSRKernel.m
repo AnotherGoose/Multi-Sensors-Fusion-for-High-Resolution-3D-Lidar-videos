@@ -7,12 +7,8 @@ cd C:\Users\saifs\Desktop\Backup\UNI\LIDAR\Shared_4thYear_MEng_Projects\Shared_4
 load Art_Depth_Reflectivity_Clean.mat DepthImage
 
 
-% D_HR = imread("C:\Users\saifs\Downloads\RWMH-Instance.png")
 D_HR = DepthImage
-% D_HR = D_HR - 300
-% D_HR = imcomplement(D_HR)
 D_HR = uint8(D_HR)
-% D_HR = rgb2gray(D_HR)
 [row, col] = size(D_HR)
 
 Ireference = D_HR

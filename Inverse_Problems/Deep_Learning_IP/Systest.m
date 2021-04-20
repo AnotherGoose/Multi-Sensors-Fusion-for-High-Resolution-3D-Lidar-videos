@@ -117,13 +117,7 @@ for jj =   1:col
     end
 end
 
-PointCloudObject = pointCloud(CoordinateMatrix,'Color',[zeros(row*col,2),ones(row*col,1)]);
 
-ptCloudOut1 = pcdenoise( PointCloudObject,'Threshold',0.3,'NumNeighbors',15);
-figure
-pcshow(ptCloudOut1)
-
-toc
 
 
 elseif(op=='SR')
@@ -156,66 +150,7 @@ figure
 montage({Ireference, Ilowres, Ivdsr}, 'Size',[1,3])
 title('Reference Image | Low-Res Component | VDSR Upscaled Product')
 
-%   reconst = reconst'
-    x = kron(ones(row,1),(1:col)')
-    y = reshape(ref3d(end:-1:1,:)',row*col,1)'
-    z = kron((1:row)',ones(col,1))
-    figure
-    subplot(2,2,1)
-    scatter3(x, y, z, 50 ,'.'),
 
-
-    [row,col] = size(rgb2gray(IlowresC));
-    reconst = zeros(row, col)
-    parfor i = 1:1:row
-    for j = 1:1:col
-    nat = impixel(IlowresC, i, j)
-    reconst(i, j) = nat(1)
-    
-    end
-    end
-    reconst = reconst'
-    x = kron(ones(row,1),(1:col)')
-    y = reshape(reconst(end:-1:1,:)',row*col,1)'
-    z = kron((1:row)',ones(col,1))
-    
-    subplot(2,2,2)
-    scatter3(x, y, z, 50 ,'.'),
-    clear reconst
-    
-    [row,col] = size(rgb2gray(Ivdsr));
-    reconst = zeros(row, col)
-    parfor i = 1:1:row
-    for j = 1:1:col
-    nat = impixel(Ivdsr, i, j)
-    reconst(i, j) = nat(1)
-    
-    end
-    end
-    reconst = reconst'
-    x = kron(ones(row,1),(1:col)')
-    y = reshape(reconst(end:-1:1,:)',row*col,1)'
-    z = kron((1:row)',ones(col,1))
-
-    subplot(2,2,3)
-    scatter3(x, y, z, 50 ,'.'),
-    
-    CoordinateMatrix=[];
-    
-n = 1; 
-for jj =   1:col
-    for ii =   1:row
-        CoordinateMatrix = [CoordinateMatrix; [jj , double(Ivdsr(n)), row-ii+1 ]];
-        n         = n+1;
-    end
 end
-
-PointCloudObject = pointCloud(CoordinateMatrix,'Color',[zeros(row*col,2),ones(row*col,1)]);
-
-ptCloudOut1 = pcdenoise( PointCloudObject,'Threshold',0.3,'NumNeighbors',15);
-figure
-pcshow(ptCloudOut1)
-end
-toc
 
 
