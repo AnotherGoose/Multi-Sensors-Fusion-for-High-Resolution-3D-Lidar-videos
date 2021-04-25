@@ -14,9 +14,10 @@ Computer Vision toolbox: <https://uk.mathworks.com/products/computer-vision.html
 
 
 ## Acknowledgements
-This denoiser is has been adapted for 3D functionality using structured and unstructured data inputs. This verison of Guided Filtering as been adpated from He Kaiming (et all.).
+This denoiser is has been adapted for 3D functionality using structured and unstructured data inputs. This verison of Guided Filtering as been adpated from He Kaiming (et all.) original 2D image filter. I would high suggest reading the papers on their website where they discuss how the mathematical calculations work and their faster verison of 2D image filtering, where they improve on their only filter.
 
-Original Guided Filtering .mat files: <https://github.com/accessify/fast-guided-filter>
+He Kaiming et all. Guided Filtering papers:  http://kaiminghe.com/eccv10/
+Github repository uploaded by an unrelated user: <https://github.com/accessify/fast-guided-filter>
 
 
 
