@@ -5,8 +5,20 @@ Guided Filtering is a filtering technique which uses a guidance image (I) to imp
 
 For this use case, Guided Filtering is used to denoise a video provided by (one of two) Adaptive sampling techniques frame by frame then accumulate the denoised frames into a point cloud to replicate a video playing.
 
-## Methods
+## Requirements
+All code for this denoiser was made on MATLAB R2020a and using the following toolboxes:
+
+UAV toolbox: <https://uk.mathworks.com/products/uav.html>
+LIDAR toolbox: <https://uk.mathworks.com/products/lidar.html>
+Computer Vision toolbox: <https://uk.mathworks.com/products/computer-vision.html>
+
+
+## Acknowledgements
 This denoiser is has been adapted for 3D functionality using structured and unstructured data inputs. This verison of Guided Filtering as been adpated from He Kaiming (et all.).
+
+Original Guided Filtering .mat files: <https://github.com/accessify/fast-guided-filter>
+
+
 
 
 
